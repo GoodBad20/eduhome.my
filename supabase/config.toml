@@ -1,0 +1,67 @@
+# A string used to distinguish different Supabase projects on the same host. Defaults to the
+# working directory name when running `supabase init`.
+project_id = "eduhome"
+
+[api]
+enabled = true
+# Port to use for the API URL.
+port = 54321
+# Schemas to expose in your API. Tables, views and stored procedures in this schema will get API
+# endpoints. public and storage are always included.
+schemas = ["public", "storage", "graphql_public"]
+# Extra schemas to add to the search_path of every request. public is always included.
+extra_search_path = ["public", "extensions"]
+# The maximum number of rows returns from a view, table, or stored procedure. Defaults to 1000.
+max_rows = 1000
+
+[db]
+# Port to use for the local database URL.
+port = 54322
+# The database major version to use. Has to be the same as your remote version to work with local migrations.
+major_version = 15
+
+[studio]
+enabled = true
+# Port to use for Supabase Studio.
+port = 54323
+
+# Email testing server. Emails sent with the local dev setup are not actually sent - rather, they
+# are monitored, and you can view the emails that would have been sent from the web interface.
+[inbucket]
+enabled = true
+# Port to use for the email testing server web interface.
+port = 54324
+smtp_port = 54325
+
+[storage]
+enabled = true
+# The maximum file size allowed (e.g. "5MB", "500KB").
+file_size_limit = "50MiB"
+
+[auth]
+enabled = true
+# The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
+# in emails.
+site_url = "http://localhost:3000"
+# A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
+additional_redirect_urls = ["https://localhost:3000"]
+# How long tokens are valid, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
+jwt_expiry = 3600
+# If disabled, a refresh token will never be issued.
+enable_refresh_token_rotation = true
+# Allows users to signup anonymously.
+enable_anonymous_sign_ins = false
+
+[auth.email]
+# Allow/disallow new user signups via email to your project.
+enable_signup = true
+# If enabled, a user will be able to request a password change link.
+enable_password_reset = true
+# If enabled, a user will be able to request an email change link.
+enable_email_confirmations = true
+
+[analytics]
+enabled = false
+port = 54327
+vector_port = 54328
+backend_port = 54329
