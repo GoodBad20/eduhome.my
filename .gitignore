@@ -50,4 +50,5 @@ coverage/
 
 # Temporary folders
 tmp/
-temp/
+temp/node_modules/
+.env
