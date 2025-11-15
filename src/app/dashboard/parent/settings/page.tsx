@@ -8,6 +8,7 @@ import ProfilePictureUpload from '@/components/ui/ProfilePictureUpload'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { settingsService, UserSettings } from '@/lib/services/settingsService'
 import {
   User,
   Bell,
@@ -35,37 +36,7 @@ import {
   Key
 } from 'lucide-react'
 
-interface UserSettings {
-  // Profile Settings
-  full_name: string
-  email: string
-  phone: string
-  location: string
-  bio: string
-  timezone: string
-  language: string
-
-  // Notification Settings
-  email_notifications: boolean
-  push_notifications: boolean
-  sms_notifications: boolean
-  lesson_reminders: boolean
-  payment_alerts: boolean
-  message_notifications: boolean
-  progress_reports: boolean
-  marketing_emails: boolean
-
-  // Privacy Settings
-  profile_visibility: 'public' | 'private'
-  show_contact_info: boolean
-  data_sharing: boolean
-  two_factor_auth: boolean
-
-  // Appearance Settings
-  theme: 'light' | 'dark' | 'system'
-  compact_mode: boolean
-
-  // Account Settings
+interface AccountInfo {
   account_status: string
   member_since: string
   subscription_plan: string
@@ -88,11 +59,10 @@ export default function ParentSettingsPage() {
 
   const [settings, setSettings] = useState<UserSettings>({
     // Profile Settings
-    full_name: user?.user_metadata?.full_name || 'Parent Name',
-    email: user?.email || '',
-    phone: '+60 12-345 6789',
-    location: 'Kuala Lumpur, Malaysia',
-    bio: 'Dedicated parent focused on providing the best education opportunities for my children.',
+    full_name: '',
+    phone: '',
+    location: '',
+    bio: '',
     timezone: 'Asia/Kuala_Lumpur',
     language: 'English',
 
@@ -114,14 +84,17 @@ export default function ParentSettingsPage() {
 
     // Appearance Settings
     theme: 'light',
-    compact_mode: false,
-
-    // Account Settings
-    account_status: 'Active',
-    member_since: 'January 2024',
-    subscription_plan: 'Premium',
-    children_count: 3
+    compact_mode: false
   })
+
+  const [accountInfo, setAccountInfo] = useState<AccountInfo>({
+    account_status: 'Active',
+    member_since: '',
+    subscription_plan: 'Premium',
+    children_count: 0
+  })
+
+  const [initialSettings, setInitialSettings] = useState<UserSettings | null>(null)
 
   const tabs = [
     { id: 'profile', name: 'Profile', icon: User },
@@ -134,11 +107,37 @@ export default function ParentSettingsPage() {
   ]
 
   useEffect(() => {
-    // Load avatar URL from user metadata
-    if (user?.user_metadata?.avatar_url) {
-      setAvatarUrl(user.user_metadata.avatar_url)
+    if (user?.id) {
+      loadSettings()
     }
   }, [user])
+
+  const loadSettings = async () => {
+    if (!user?.id) return
+
+    try {
+      setLoading(true)
+
+      // Load user settings and account info in parallel
+      const [userSettings, accountData] = await Promise.all([
+        settingsService.getUserSettings(user.id),
+        settingsService.getUserAccountInfo(user.id)
+      ])
+
+      setSettings(userSettings)
+      setInitialSettings(userSettings)
+      setAccountInfo(accountData)
+
+      // Load avatar URL from user metadata
+      if (user?.user_metadata?.avatar_url) {
+        setAvatarUrl(user.user_metadata.avatar_url)
+      }
+    } catch (error) {
+      console.error('Error loading settings:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleAvatarChange = async (newAvatarUrl: string | null) => {
     setAvatarUrl(newAvatarUrl)
@@ -157,13 +156,21 @@ export default function ParentSettingsPage() {
   }
 
   const handleSaveSettings = async () => {
+    if (!user?.id) return
+
     setSaving(true)
     try {
-      // TODO: Save settings to database
-      await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
-      console.log('Settings saved:', settings)
+      const success = await settingsService.updateUserSettings(user.id, settings)
+      if (success) {
+        setInitialSettings({ ...settings })
+        // Show success message
+        alert('Settings saved successfully!')
+      } else {
+        alert('Failed to save settings. Please try again.')
+      }
     } catch (error) {
       console.error('Error saving settings:', error)
+      alert('An error occurred while saving settings')
     } finally {
       setSaving(false)
     }
@@ -176,18 +183,23 @@ export default function ParentSettingsPage() {
       return
     }
 
+    if (!user?.id) return
+
     setLoading(true)
     try {
-      // TODO: Implement password change logic
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      setShowPasswordForm(false)
-      setCurrentPassword('')
-      setNewPassword('')
-      setConfirmPassword('')
-      alert('Password changed successfully')
+      const result = await settingsService.changePassword(user.id, currentPassword, newPassword)
+      if (result.success) {
+        setShowPasswordForm(false)
+        setCurrentPassword('')
+        setNewPassword('')
+        setConfirmPassword('')
+        alert('Password changed successfully')
+      } else {
+        alert(result.message)
+      }
     } catch (error) {
       console.error('Error changing password:', error)
-      alert('Error changing password')
+      alert('An error occurred while changing password')
     } finally {
       setLoading(false)
     }
@@ -756,20 +768,20 @@ export default function ParentSettingsPage() {
               <p className="text-sm text-gray-600">Account Status</p>
               <p className="font-semibold text-green-600 flex items-center mt-1">
                 <Check className="h-4 w-4 mr-1" />
-                {settings.account_status}
+                {accountInfo.account_status}
               </p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-sm text-gray-600">Member Since</p>
-              <p className="font-semibold text-gray-900 mt-1">{settings.member_since}</p>
+              <p className="font-semibold text-gray-900 mt-1">{accountInfo.member_since}</p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-sm text-gray-600">Subscription Plan</p>
-              <p className="font-semibold text-blue-600 mt-1">{settings.subscription_plan}</p>
+              <p className="font-semibold text-blue-600 mt-1">{accountInfo.subscription_plan}</p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-sm text-gray-600">Children</p>
-              <p className="font-semibold text-gray-900 mt-1">{settings.children_count} registered</p>
+              <p className="font-semibold text-gray-900 mt-1">{accountInfo.children_count} registered</p>
             </div>
           </div>
         </CardContent>
@@ -809,8 +821,8 @@ export default function ParentSettingsPage() {
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="font-semibold text-blue-900">{settings.subscription_plan} Plan</h4>
-              <p className="text-sm text-blue-700">RM99/month • Renews on Feb 15, 2024</p>
+              <h4 className="font-semibold text-blue-900">{accountInfo.subscription_plan} Plan</h4>
+              <p className="text-sm text-blue-700">RM99/month • Renews monthly</p>
             </div>
             <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-300">
               Active
