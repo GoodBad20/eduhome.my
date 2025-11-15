@@ -502,7 +502,7 @@ export default function ParentSchedulePage() {
           childId={selectedChild}
           dayOfWeek={selectedDay}
           editingItem={editingItem}
-          onSave={(item) => {
+          onSave={(item: any) => {
             // Handle save logic
             setShowAddModal(false)
             loadChildren()

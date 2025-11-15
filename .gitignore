@@ -52,3 +52,4 @@ coverage/
 tmp/
 temp/node_modules/
 .env
+.vercel

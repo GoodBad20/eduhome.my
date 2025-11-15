@@ -5,8 +5,18 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import ProfilePictureUpload from '@/components/ui/ProfilePictureUpload'
+import { useLanguage } from '@/contexts/LanguageContext'
+import { useAnalytics } from '@/hooks/useAnalytics'
 
 export default function SignupPage() {
+  const { t } = useLanguage()
+  const {
+    trackUserRegistration,
+    trackFormStart,
+    trackSuccessfulSubmission,
+    trackAnalyticsError,
+    trackUserInteraction
+  } = useAnalytics()
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -40,14 +50,19 @@ export default function SignupPage() {
     setError(null)
     setSuccess(false)
 
+    // Track form start
+    trackFormStart('Signup Form')
+
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match')
+      trackAnalyticsError('Passwords do not match', 'Signup Form')
       setLoading(false)
       return
     }
 
     if (formData.password.length < 6) {
       setError('Password must be at least 6 characters')
+      trackAnalyticsError('Password too short', 'Signup Form')
       setLoading(false)
       return
     }
@@ -74,44 +89,53 @@ export default function SignupPage() {
         password: formData.password,
         options: {
           data: metadata,
+          emailRedirectTo: `${window.location.origin}/auth/login`,
+          // Disable email confirmation for development
         },
       })
 
       if (error) {
         setError(error.message)
+        trackAnalyticsError(error, 'Signup Form')
       } else if (data.user) {
         setTempUserId(data.user.id)
+
+        // Track successful registration
+        trackUserRegistration('email')
+        trackSuccessfulSubmission('Signup Form')
 
         // Create user profile with avatar
         const { error: profileError } = await supabase
           .from('users')
-          .insert([{
+          .insert({
             id: data.user.id,
             email: formData.email,
             full_name: formData.fullName,
             role: formData.role,
             avatar_url: profilePicture,
-          }])
+          } as any)
 
         if (profileError) {
           console.error('Profile creation error:', profileError)
+          trackAnalyticsError(profileError, 'Profile Creation')
         }
 
         // If tutor, create tutor profile
         if (formData.role === 'tutor') {
           const { error: tutorError } = await supabase
             .from('tutor_profiles')
-            .insert([{
+            .insert({
               user_id: data.user.id,
               qualification: formData.qualification,
               experience_years: parseInt(formData.experienceYears) || 0,
               hourly_rate: parseFloat(formData.hourlyRate) || 0,
               location: 'Malaysia', // Default location
               avatar_url: profilePicture,
-            }])
+            } as any)
 
           if (tutorError) {
             console.error('Tutor profile creation error:', tutorError)
+            trackAnalyticsError(tutorError, 'Tutor Profile Creation')
           }
         }
 
@@ -122,6 +146,7 @@ export default function SignupPage() {
       }
     } catch (error) {
       setError('An unexpected error occurred')
+      trackAnalyticsError(error, 'Signup Form')
     } finally {
       setLoading(false)
     }
@@ -129,15 +154,15 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full text-center">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Account Created!</h1>
-          <p className="text-gray-600 mb-4">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">Account Created!</h1>
+          <p className="text-slate-600 mb-4">
             Your account has been successfully created. Redirecting to login page...
           </p>
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mt-4"></div>
@@ -147,14 +172,15 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8 px-4 sm:py-12 sm:px-6 overflow-x-hidden">
+      <div className="max-w-md w-full space-y-6 sm:space-y-8">
         <div>
-          <Link href="/" className="flex justify-center">
-            <h1 className="text-3xl font-bold text-blue-600">EduHome.my</h1>
+          <Link href="/" className="flex justify-center items-center space-x-2">
+            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg"></div>
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">EduHome.my</h1>
           </Link>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
+          <h2 className="mt-4 sm:mt-6 text-center text-2xl sm:text-3xl font-extrabold text-gray-900">
+            {t('auth.signup')}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Or{' '}
@@ -175,10 +201,13 @@ export default function SignupPage() {
             {/* Profile Picture Upload */}
             <div className="flex justify-center mb-6">
               <ProfilePictureUpload
-                currentAvatar={profilePicture}
+                currentAvatar={profilePicture || undefined}
                 userId={tempUserId || 'temp'}
                 name={formData.fullName || 'User'}
-                onAvatarChange={setProfilePicture}
+                onAvatarChange={(url) => {
+                  setProfilePicture(url)
+                  trackUserInteraction('profile_picture_upload', 'Signup Form')
+                }}
                 size="xl"
                 editable={true}
               />
@@ -186,7 +215,7 @@ export default function SignupPage() {
 
             <div>
               <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
-                Full Name
+                {t('auth.fullName')}
               </label>
               <input
                 id="fullName"
@@ -194,7 +223,7 @@ export default function SignupPage() {
                 type="text"
                 required
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="John Doe"
+                placeholder={t('auth.fullName')}
                 value={formData.fullName}
                 onChange={handleChange}
               />
@@ -202,7 +231,7 @@ export default function SignupPage() {
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email Address
+                {t('auth.email')}
               </label>
               <input
                 id="email"
@@ -227,7 +256,10 @@ export default function SignupPage() {
                 required
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 value={formData.role}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e)
+                  trackUserInteraction(`role_selection_${e.target.value}`, 'Signup Form')
+                }}
               >
                 <option value="parent">Parent</option>
                 <option value="tutor">Tutor</option>

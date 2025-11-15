@@ -7,8 +7,9 @@ import DashboardLayout from '@/components/layout/DashboardLayout'
 export default function TutorLessonsPage() {
   const { user } = useSupabase()
   const [showCreateModal, setShowCreateModal] = useState(false)
-
-  const lessons = [
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [editingLesson, setEditingLesson] = useState<any>(null)
+  const [lessons, setLessons] = useState([
     {
       id: 1,
       title: 'Introduction to Algebra',
@@ -65,7 +66,116 @@ export default function TutorLessonsPage() {
       meetingLink: 'https://meet.google.com/jkl-mno-789',
       location: null
     }
-  ]
+  ])
+
+  // Form state for creating/editing lessons
+  const [lessonForm, setLessonForm] = useState({
+    title: '',
+    subject: '',
+    student: '',
+    date: '',
+    time: '',
+    type: 'online',
+    meetingLink: '',
+    location: '',
+    notes: ''
+  })
+
+  // Handler functions
+  const handleCreateLesson = () => {
+    const newLesson = {
+      id: lessons.length + 1,
+      title: lessonForm.title,
+      subject: lessonForm.subject,
+      student: lessonForm.student,
+      date: lessonForm.date,
+      time: lessonForm.time,
+      type: lessonForm.type,
+      status: 'scheduled',
+      materials: [],
+      notes: lessonForm.notes,
+      meetingLink: lessonForm.type === 'online' ? lessonForm.meetingLink : null,
+      location: lessonForm.type === 'in_person' ? lessonForm.location : null
+    }
+
+    setLessons([...lessons, newLesson])
+    setShowCreateModal(false)
+    resetForm()
+  }
+
+  const handleEditLesson = (lesson: any) => {
+    setEditingLesson(lesson)
+    setLessonForm({
+      title: lesson.title,
+      subject: lesson.subject,
+      student: lesson.student,
+      date: lesson.date,
+      time: lesson.time,
+      type: lesson.type,
+      meetingLink: lesson.meetingLink || '',
+      location: lesson.location || '',
+      notes: lesson.notes || ''
+    })
+    setShowEditModal(true)
+  }
+
+  const handleUpdateLesson = () => {
+    const updatedLessons = lessons.map(lesson =>
+      lesson.id === editingLesson.id
+        ? {
+            ...lesson,
+            title: lessonForm.title,
+            subject: lessonForm.subject,
+            student: lessonForm.student,
+            date: lessonForm.date,
+            time: lessonForm.time,
+            type: lessonForm.type,
+            meetingLink: lessonForm.type === 'online' ? lessonForm.meetingLink : null,
+            location: lessonForm.type === 'in_person' ? lessonForm.location : null,
+            notes: lessonForm.notes
+          }
+        : lesson
+    )
+
+    setLessons(updatedLessons)
+    setShowEditModal(false)
+    setEditingLesson(null)
+    resetForm()
+  }
+
+  const handleCancelLesson = (lessonId: number) => {
+    if (window.confirm('Are you sure you want to cancel this lesson?')) {
+      const updatedLessons = lessons.map(lesson =>
+        lesson.id === lessonId
+          ? { ...lesson, status: 'cancelled' }
+          : lesson
+      )
+      setLessons(updatedLessons)
+    }
+  }
+
+  const handleStartLesson = (lessonId: number) => {
+    const lesson = lessons.find(l => l.id === lessonId)
+    if (lesson?.meetingLink) {
+      window.open(lesson.meetingLink, '_blank')
+    } else {
+      alert('Starting lesson session...')
+    }
+  }
+
+  const resetForm = () => {
+    setLessonForm({
+      title: '',
+      subject: '',
+      student: '',
+      date: '',
+      time: '',
+      type: 'online',
+      meetingLink: '',
+      location: '',
+      notes: ''
+    })
+  }
 
   const upcomingLessons = lessons.filter(lesson => lesson.status === 'scheduled')
   const completedLessons = lessons.filter(lesson => lesson.status === 'completed')
@@ -185,9 +295,24 @@ export default function TutorLessonsPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex space-x-2">
-                          <button className="text-blue-600 hover:text-blue-900">Start</button>
-                          <button className="text-gray-600 hover:text-gray-900">Edit</button>
-                          <button className="text-red-600 hover:text-red-900">Cancel</button>
+                          <button
+                            onClick={() => handleStartLesson(lesson.id)}
+                            className="text-blue-600 hover:text-blue-900 font-medium"
+                          >
+                            Start
+                          </button>
+                          <button
+                            onClick={() => handleEditLesson(lesson)}
+                            className="text-gray-600 hover:text-gray-900 font-medium"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleCancelLesson(lesson.id)}
+                            className="text-red-600 hover:text-red-900 font-medium"
+                          >
+                            Cancel
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -282,6 +407,8 @@ export default function TutorLessonsPage() {
                     </label>
                     <input
                       type="text"
+                      value={lessonForm.title}
+                      onChange={(e) => setLessonForm({ ...lessonForm, title: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., Introduction to Algebra"
                     />
@@ -293,6 +420,8 @@ export default function TutorLessonsPage() {
                     </label>
                     <input
                       type="text"
+                      value={lessonForm.subject}
+                      onChange={(e) => setLessonForm({ ...lessonForm, subject: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., Mathematics"
                     />
@@ -302,12 +431,16 @@ export default function TutorLessonsPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Student
                     </label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <select
+                      value={lessonForm.student}
+                      onChange={(e) => setLessonForm({ ...lessonForm, student: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
                       <option value="">Select a student</option>
-                      <option value="alice">Alice Wong</option>
-                      <option value="bob">Bob Kim</option>
-                      <option value="carol">Carol Lee</option>
-                      <option value="david">David Tan</option>
+                      <option value="Alice Wong">Alice Wong</option>
+                      <option value="Bob Kim">Bob Kim</option>
+                      <option value="Carol Lee">Carol Lee</option>
+                      <option value="David Tan">David Tan</option>
                     </select>
                   </div>
 
@@ -318,6 +451,8 @@ export default function TutorLessonsPage() {
                       </label>
                       <input
                         type="date"
+                        value={lessonForm.date}
+                        onChange={(e) => setLessonForm({ ...lessonForm, date: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
@@ -327,6 +462,8 @@ export default function TutorLessonsPage() {
                       </label>
                       <input
                         type="text"
+                        value={lessonForm.time}
+                        onChange={(e) => setLessonForm({ ...lessonForm, time: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="2:00 PM - 3:00 PM"
                       />
@@ -343,6 +480,8 @@ export default function TutorLessonsPage() {
                           type="radio"
                           name="sessionType"
                           value="online"
+                          checked={lessonForm.type === 'online'}
+                          onChange={(e) => setLessonForm({ ...lessonForm, type: 'online' })}
                           className="mr-2"
                         />
                         <span className="text-sm text-gray-700">💻 Online Session</span>
@@ -352,6 +491,8 @@ export default function TutorLessonsPage() {
                           type="radio"
                           name="sessionType"
                           value="in_person"
+                          checked={lessonForm.type === 'in_person'}
+                          onChange={(e) => setLessonForm({ ...lessonForm, type: 'in_person' })}
                           className="mr-2"
                         />
                         <span className="text-sm text-gray-700">🏫 In-Person Session</span>
@@ -359,27 +500,35 @@ export default function TutorLessonsPage() {
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Google Meet Link (for online sessions)
-                    </label>
-                    <input
-                      type="url"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="https://meet.google.com/xxx-xxx-xxx"
-                    />
-                  </div>
+                  {lessonForm.type === 'online' && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Google Meet Link
+                      </label>
+                      <input
+                        type="url"
+                        value={lessonForm.meetingLink}
+                        onChange={(e) => setLessonForm({ ...lessonForm, meetingLink: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="https://meet.google.com/xxx-xxx-xxx"
+                      />
+                    </div>
+                  )}
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Location (for in-person sessions)
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="e.g., Starbucks Coffee, KLCC"
-                    />
-                  </div>
+                  {lessonForm.type === 'in_person' && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Location
+                      </label>
+                      <input
+                        type="text"
+                        value={lessonForm.location}
+                        onChange={(e) => setLessonForm({ ...lessonForm, location: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="e.g., Starbucks Coffee, KLCC"
+                      />
+                    </div>
+                  )}
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -387,6 +536,8 @@ export default function TutorLessonsPage() {
                     </label>
                     <textarea
                       rows={3}
+                      value={lessonForm.notes}
+                      onChange={(e) => setLessonForm({ ...lessonForm, notes: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Lesson objectives, topics to cover, etc."
                     />
@@ -395,16 +546,189 @@ export default function TutorLessonsPage() {
 
                 <div className="flex justify-end space-x-3 mt-6">
                   <button
-                    onClick={() => setShowCreateModal(false)}
+                    onClick={() => {
+                      setShowCreateModal(false)
+                      resetForm()
+                    }}
                     className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium"
                   >
                     Cancel
                   </button>
                   <button
-                    onClick={() => setShowCreateModal(false)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                    onClick={handleCreateLesson}
+                    disabled={!lessonForm.title || !lessonForm.subject || !lessonForm.student || !lessonForm.date || !lessonForm.time}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
                   >
                     Create Lesson
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Lesson Modal */}
+        {showEditModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+              <div className="p-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Edit Lesson</h3>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Lesson Title
+                    </label>
+                    <input
+                      type="text"
+                      value={lessonForm.title}
+                      onChange={(e) => setLessonForm({ ...lessonForm, title: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Subject
+                    </label>
+                    <input
+                      type="text"
+                      value={lessonForm.subject}
+                      onChange={(e) => setLessonForm({ ...lessonForm, subject: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Student
+                    </label>
+                    <select
+                      value={lessonForm.student}
+                      onChange={(e) => setLessonForm({ ...lessonForm, student: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Select a student</option>
+                      <option value="Alice Wong">Alice Wong</option>
+                      <option value="Bob Kim">Bob Kim</option>
+                      <option value="Carol Lee">Carol Lee</option>
+                      <option value="David Tan">David Tan</option>
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Date
+                      </label>
+                      <input
+                        type="date"
+                        value={lessonForm.date}
+                        onChange={(e) => setLessonForm({ ...lessonForm, date: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Time
+                      </label>
+                      <input
+                        type="text"
+                        value={lessonForm.time}
+                        onChange={(e) => setLessonForm({ ...lessonForm, time: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Session Type
+                    </label>
+                    <div className="space-y-2">
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="editSessionType"
+                          value="online"
+                          checked={lessonForm.type === 'online'}
+                          onChange={(e) => setLessonForm({ ...lessonForm, type: 'online' })}
+                          className="mr-2"
+                        />
+                        <span className="text-sm text-gray-700">💻 Online Session</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="editSessionType"
+                          value="in_person"
+                          checked={lessonForm.type === 'in_person'}
+                          onChange={(e) => setLessonForm({ ...lessonForm, type: 'in_person' })}
+                          className="mr-2"
+                        />
+                        <span className="text-sm text-gray-700">🏫 In-Person Session</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  {lessonForm.type === 'online' && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Google Meet Link
+                      </label>
+                      <input
+                        type="url"
+                        value={lessonForm.meetingLink}
+                        onChange={(e) => setLessonForm({ ...lessonForm, meetingLink: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  )}
+
+                  {lessonForm.type === 'in_person' && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Location
+                      </label>
+                      <input
+                        type="text"
+                        value={lessonForm.location}
+                        onChange={(e) => setLessonForm({ ...lessonForm, location: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Notes
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={lessonForm.notes}
+                      onChange={(e) => setLessonForm({ ...lessonForm, notes: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-3 mt-6">
+                  <button
+                    onClick={() => {
+                      setShowEditModal(false)
+                      setEditingLesson(null)
+                      resetForm()
+                    }}
+                    className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleUpdateLesson}
+                    disabled={!lessonForm.title || !lessonForm.subject || !lessonForm.student || !lessonForm.date || !lessonForm.time}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  >
+                    Update Lesson
                   </button>
                 </div>
               </div>

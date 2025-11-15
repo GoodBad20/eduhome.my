@@ -4,8 +4,12 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { useLanguage } from '@/contexts/LanguageContext'
+import { useAnalytics } from '@/hooks/useAnalytics'
 
 export default function LoginPage() {
+  const { t } = useLanguage()
+  const { trackUserLogin, trackFormStart, trackSuccessfulSubmission, trackAnalyticsError } = useAnalytics()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -18,6 +22,9 @@ export default function LoginPage() {
     setLoading(true)
     setError(null)
 
+    // Track form start
+    trackFormStart('Login Form')
+
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email,
@@ -26,30 +33,36 @@ export default function LoginPage() {
 
       if (error) {
         setError(error.message)
+        trackAnalyticsError(error, 'Login Form')
       } else {
+        // Track successful login
+        trackUserLogin('email')
+        trackSuccessfulSubmission('Login Form')
         router.push('/dashboard')
       }
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       setError('An unexpected error occurred')
+      trackAnalyticsError(error, 'Login Form')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-8 px-4 sm:py-12 sm:px-6 overflow-x-hidden">
+      <div className="max-w-md w-full space-y-6 sm:space-y-8">
         <div>
           <Link href="/" className="flex justify-center">
-            <h1 className="text-3xl font-bold text-blue-600">EduHome.my</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-blue-600">EduHome.my</h1>
           </Link>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+          <h2 className="mt-4 sm:mt-6 text-center text-2xl sm:text-3xl font-extrabold text-gray-900">
+            {t('auth.login')} to your account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Or{' '}
             <Link href="/auth/signup" className="font-medium text-blue-600 hover:text-blue-500">
-              create a new account
+              {t('auth.signup')} for a new account
             </Link>
           </p>
         </div>
@@ -73,7 +86,7 @@ export default function LoginPage() {
                 autoComplete="email"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                placeholder={t('auth.email')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -89,7 +102,7 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                placeholder={t('auth.password')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -125,7 +138,7 @@ export default function LoginPage() {
               {loading ? (
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
               ) : (
-                'Sign in'
+                t('auth.login')
               )}
             </button>
           </div>

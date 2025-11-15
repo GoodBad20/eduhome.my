@@ -85,38 +85,38 @@ export default function ParentDashboard() {
 
   return (
     <DashboardLayout userRole="parent">
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         {/* Welcome Header */}
-        <div className="mb-8 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-2xl p-8 text-white shadow-lg">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold mb-2">Welcome back, {user?.user_metadata?.full_name || 'Parent'}! 👋</h1>
-              <p className="text-xl opacity-90">
+        <div className="mb-6 sm:mb-8 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-2xl p-4 sm:p-6 md:p-8 text-white shadow-lg">
+          <div className="flex flex-col sm:flex-row items-center justify-between text-center sm:text-left">
+            <div className="mb-4 sm:mb-0">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2">Welcome back, {user?.user_metadata?.full_name || 'Parent'}! 👋</h1>
+              <p className="text-sm sm:text-base md:text-xl opacity-90">
                 {children.length > 0
                   ? `Your ${children.length} ${children.length === 1 ? 'child is' : 'children are'} doing amazing! Let's see today's learning adventures`
                   : "Let's get started with your child's learning journey!"
                 }
               </p>
             </div>
-            <div className="text-6xl">🌟</div>
+            <div className="text-4xl sm:text-6xl">🌟</div>
           </div>
         </div>
 
         {/* Children Cards */}
         {children.length > 0 && (
-          <div className="mb-8">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-gray-800 flex items-center">
+          <div className="mb-6 sm:mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-2 sm:space-y-0">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center">
                 <span className="mr-2">👨‍👩‍👧‍👦</span> My Children
               </h2>
               <button
                 onClick={() => setAddChildModalOpen(true)}
-                className="bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-xl font-medium hover:from-green-600 hover:to-teal-600 transition-colors flex items-center"
+                className="bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-xl font-medium hover:from-green-600 hover:to-teal-600 transition-colors flex items-center w-full sm:w-auto justify-center"
               >
                 <span className="mr-2">➕</span> Add Child
               </button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {children.map((child) => (
                 <ChildCard
                   key={child.id}
@@ -131,13 +131,13 @@ export default function ParentDashboard() {
 
         {/* No Children State */}
         {children.length === 0 && (
-          <div className="mb-8 bg-white rounded-2xl shadow-lg p-8 text-center">
-            <div className="text-6xl mb-4">👶</div>
-            <h3 className="text-xl font-bold text-gray-800 mb-2">No Children Added Yet</h3>
-            <p className="text-gray-600 mb-6">Start your learning journey by adding your first child</p>
+          <div className="mb-6 sm:mb-8 bg-white rounded-2xl shadow-lg p-6 sm:p-8 text-center">
+            <div className="text-4xl sm:text-6xl mb-4">👶</div>
+            <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2">No Children Added Yet</h3>
+            <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">Start your learning journey by adding your first child</p>
             <button
               onClick={() => setAddChildModalOpen(true)}
-              className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-xl font-medium hover:from-blue-600 hover:to-purple-600 transition-colors"
+              className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-xl font-medium hover:from-blue-600 hover:to-purple-600 transition-colors w-full sm:w-auto"
             >
               Add Your First Child ➕
             </button>
@@ -151,7 +151,7 @@ export default function ParentDashboard() {
             <StatsOverview parentId={user?.id || ''} />
 
             {/* Two Column Layout for Main Content */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 mb-6">
               {/* Upcoming Lessons */}
               <UpcomingLessons parentId={user?.id || ''} />
 
@@ -160,7 +160,7 @@ export default function ParentDashboard() {
             </div>
 
             {/* Enhanced Achievements & Quick Actions */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
               {/* Enhanced Achievements */}
               <div className="bg-white rounded-2xl shadow-lg p-6">
                 <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">

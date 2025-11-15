@@ -7,6 +7,8 @@ import DashboardLayout from '@/components/layout/DashboardLayout'
 export default function TutorSchedulePage() {
   const { user } = useSupabase()
   const [viewMode, setViewMode] = useState<'week' | 'month'>('week')
+  const [showAddLessonModal, setShowAddLessonModal] = useState(false)
+  const [showBlockTimeModal, setShowBlockTimeModal] = useState(false)
 
   const weekSchedule = [
     { day: 'Monday', date: '2024-01-15', lessons: [
@@ -104,7 +106,7 @@ export default function TutorSchedulePage() {
     { day: 'Sunday', date: '2024-01-21', lessons: []}
   ]
 
-  const availabilitySettings = {
+  const [availabilitySettings, setAvailabilitySettings] = useState({
     monday: { available: true, start_time: '2:00 PM', end_time: '6:00 PM' },
     tuesday: { available: true, start_time: '3:00 PM', end_time: '7:00 PM' },
     wednesday: { available: true, start_time: '2:00 PM', end_time: '5:00 PM' },
@@ -112,6 +114,31 @@ export default function TutorSchedulePage() {
     friday: { available: true, start_time: '3:00 PM', end_time: '7:00 PM' },
     saturday: { available: true, start_time: '10:00 AM', end_time: '4:00 PM' },
     sunday: { available: false, start_time: '', end_time: '' }
+  })
+
+  // Handler functions
+  const handleAvailabilityChange = (day: string, field: 'available' | 'start_time' | 'end_time', value: any) => {
+    setAvailabilitySettings(prev => ({
+      ...prev,
+      [day]: {
+        ...prev[day as keyof typeof prev],
+        [field]: value
+      }
+    }))
+  }
+
+  const handleSaveAvailability = () => {
+    alert('Availability settings saved successfully!')
+    // In a real app, this would save to the database
+    console.log('Saving availability:', availabilitySettings)
+  }
+
+  const handleAddLesson = () => {
+    setShowAddLessonModal(true)
+  }
+
+  const handleBlockTime = () => {
+    setShowBlockTimeModal(true)
   }
 
   return (
@@ -256,6 +283,7 @@ export default function TutorSchedulePage() {
                   <input
                     type="checkbox"
                     checked={settings.available}
+                    onChange={(e) => handleAvailabilityChange(day, 'available', e.target.checked)}
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
                   <span className="font-medium text-gray-900 capitalize">{day}</span>
@@ -265,12 +293,14 @@ export default function TutorSchedulePage() {
                     <input
                       type="time"
                       value={settings.start_time}
+                      onChange={(e) => handleAvailabilityChange(day, 'start_time', e.target.value)}
                       className="px-3 py-1 border border-gray-300 rounded-md text-sm"
                     />
                     <span className="text-gray-500">to</span>
                     <input
                       type="time"
                       value={settings.end_time}
+                      onChange={(e) => handleAvailabilityChange(day, 'end_time', e.target.value)}
                       className="px-3 py-1 border border-gray-300 rounded-md text-sm"
                     />
                   </div>
@@ -279,7 +309,10 @@ export default function TutorSchedulePage() {
             ))}
           </div>
           <div className="mt-6 flex justify-end">
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+            <button
+              onClick={handleSaveAvailability}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+            >
               Save Availability
             </button>
           </div>
@@ -289,11 +322,17 @@ export default function TutorSchedulePage() {
         <div className="mt-8 bg-white rounded-lg shadow p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <button className="p-4 text-center bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+            <button
+              onClick={handleAddLesson}
+              className="p-4 text-center bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+            >
               <div className="text-2xl mb-2">➕</div>
               <p className="text-sm font-medium text-gray-900">Add Lesson</p>
             </button>
-            <button className="p-4 text-center bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+            <button
+              onClick={handleBlockTime}
+              className="p-4 text-center bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
+            >
               <div className="text-2xl mb-2">📅</div>
               <p className="text-sm font-medium text-gray-900">Block Time</p>
             </button>

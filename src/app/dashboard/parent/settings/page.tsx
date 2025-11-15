@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSupabase } from '@/components/providers/SupabaseProvider'
+import { supabase } from '@/lib/supabase'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import ProfilePictureUpload from '@/components/ui/ProfilePictureUpload'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -143,7 +144,7 @@ export default function ParentSettingsPage() {
     setAvatarUrl(newAvatarUrl)
     try {
       if (user) {
-        const { error } = await user.update({
+        const { error } = await supabase.auth.updateUser({
           data: { avatar_url: newAvatarUrl }
         })
         if (error) {
@@ -209,11 +210,11 @@ export default function ParentSettingsPage() {
           <div className="flex items-center space-x-6">
             <div className="flex-shrink-0">
               <ProfilePictureUpload
-                currentAvatarUrl={avatarUrl}
+                currentAvatar={avatarUrl || undefined}
                 onAvatarChange={handleAvatarChange}
-                userType="parent"
+                name={user?.user_metadata?.full_name || 'User'}
                 userId={user?.id || ''}
-                size="large"
+                size="lg"
               />
             </div>
             <div className="flex-1">
