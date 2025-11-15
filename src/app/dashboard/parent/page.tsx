@@ -17,6 +17,15 @@ export default function ParentDashboard() {
   const [children, setChildren] = useState<ChildData[]>([])
   const [recentActivities, setRecentActivities] = useState<ActivityData[]>([])
   const [achievements, setAchievements] = useState<AchievementData[]>([])
+  const [learningInsights, setLearningInsights] = useState({
+    mostActiveSubject: 'Mathematics',
+    mostActiveSubjectProgress: 0,
+    weeklyGoalProgress: {
+      current: 0,
+      target: 15
+    },
+    recommendation: 'Start adding activities to see personalized insights'
+  })
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false)
   const [addChildModalOpen, setAddChildModalOpen] = useState(false)
   const [selectedChildId, setSelectedChildId] = useState<string>('')
@@ -34,15 +43,17 @@ export default function ParentDashboard() {
       setLoading(true)
 
       // Load all data in parallel
-      const [childrenData, activitiesData, achievementsData] = await Promise.all([
+      const [childrenData, activitiesData, achievementsData, insightsData] = await Promise.all([
         parentService.getChildren(user.id),
         parentService.getRecentActivities(user.id),
-        parentService.getAchievements(user.id)
+        parentService.getAchievements(user.id),
+        parentService.getLearningInsights(user.id)
       ])
 
       setChildren(childrenData)
       setRecentActivities(activitiesData)
       setAchievements(achievementsData)
+      setLearningInsights(insightsData)
     } catch (error) {
       console.error('Error loading dashboard data:', error)
     } finally {
@@ -226,6 +237,13 @@ export default function ParentDashboard() {
                     <div className="text-2xl mb-1">💬</div>
                     <p className="text-xs font-medium">Messages</p>
                   </button>
+                  <button
+                    onClick={() => window.location.href = '/dashboard/parent/schedule'}
+                    className="p-4 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-all transform hover:scale-105 shadow-md"
+                  >
+                    <div className="text-2xl mb-1">📅</div>
+                    <p className="text-xs font-medium">Schedule</p>
+                  </button>
                 </div>
               </div>
 
@@ -237,25 +255,28 @@ export default function ParentDashboard() {
                 <div className="space-y-4">
                   <div className="bg-white/70 rounded-lg p-3">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-700">Most Active Subject</span>
-                      <span className="text-sm font-bold text-indigo-600">Mathematics</span>
+                      <span className="text-sm font-medium text-gray-900">Most Active Subject</span>
+                      <span className="text-sm font-bold text-indigo-600">{learningInsights.mostActiveSubject}</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div className="bg-indigo-600 h-2 rounded-full" style={{ width: '85%' }}></div>
+                      <div className="bg-indigo-600 h-2 rounded-full" style={{ width: `${learningInsights.mostActiveSubjectProgress}%` }}></div>
                     </div>
                   </div>
                   <div className="bg-white/70 rounded-lg p-3">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-700">Weekly Goal Progress</span>
-                      <span className="text-sm font-bold text-green-600">12/15 hrs</span>
+                      <span className="text-sm font-medium text-gray-900">Weekly Goal Progress</span>
+                      <span className="text-sm font-bold text-green-600">{learningInsights.weeklyGoalProgress.current}/{learningInsights.weeklyGoalProgress.target} hrs</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div className="bg-green-600 h-2 rounded-full" style={{ width: '80%' }}></div>
+                      <div
+                        className="bg-green-600 h-2 rounded-full"
+                        style={{ width: `${Math.min(100, (learningInsights.weeklyGoalProgress.current / learningInsights.weeklyGoalProgress.target) * 100)}%` }}
+                      ></div>
                     </div>
                   </div>
                   <div className="bg-white/70 rounded-lg p-3">
-                    <p className="text-sm font-medium text-gray-700">Recommendation</p>
-                    <p className="text-xs text-gray-600 mt-1">Consider adding more Science sessions to balance the curriculum</p>
+                    <p className="text-sm font-medium text-gray-900">Recommendation</p>
+                    <p className="text-xs text-gray-700 mt-1">{learningInsights.recommendation}</p>
                   </div>
                 </div>
               </div>
