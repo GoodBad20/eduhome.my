@@ -123,6 +123,8 @@ export default function ParentDashboard() {
                   child={child}
                   onScheduleLesson={handleScheduleLesson}
                   onViewProgress={handleViewProgress}
+                  onChildUpdated={loadDashboardData}
+                  onChildDeleted={loadDashboardData}
                 />
               ))}
             </div>

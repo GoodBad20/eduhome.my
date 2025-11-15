@@ -147,6 +147,108 @@ class ParentService {
     }
   }
 
+  // Update existing child information
+  async updateChild(childId: string, childData: {
+    name?: string
+    grade_level?: string
+    date_of_birth?: string
+    subjects?: string[]
+    avatar_url?: string | null
+    bio?: string
+  }) {
+    try {
+      // Update student record
+      const { data: studentData, error: studentError } = await supabase
+        .from('students')
+        .update({
+          full_name: childData.name,
+          grade_level: childData.grade_level,
+          date_of_birth: childData.date_of_birth,
+          avatar_url: childData.avatar_url,
+          bio: childData.bio
+        })
+        .eq('id', childId)
+        .select()
+        .single()
+
+      if (studentError) {
+        throw new Error(`Database error: ${studentError.message}`)
+      }
+
+      // Also update the user profile if name or avatar changed
+      if (childData.name || childData.avatar_url) {
+        // Get the user_id first
+        const { data: student } = await supabase
+          .from('students')
+          .select('user_id')
+          .eq('id', childId)
+          .single()
+
+        if (student?.user_id) {
+          const { error: userError } = await supabase
+            .from('users')
+            .update({
+              full_name: childData.name,
+              avatar_url: childData.avatar_url
+            })
+            .eq('id', student.user_id)
+
+          if (userError) {
+            console.error('Failed to update user profile:', userError)
+            // Don't throw here as student update was successful
+          }
+        }
+      }
+
+      return studentData
+    } catch (error) {
+      console.error('Error updating child:', error)
+      throw error
+    }
+  }
+
+  // Delete a child account
+  async deleteChild(childId: string) {
+    try {
+      // First get the user_id to delete the auth account
+      const { data: student } = await supabase
+        .from('students')
+        .select('user_id')
+        .eq('id', childId)
+        .single()
+
+      // Delete student record
+      const { error: studentError } = await supabase
+        .from('students')
+        .delete()
+        .eq('id', childId)
+
+      if (studentError) {
+        throw new Error(`Database error: ${studentError.message}`)
+      }
+
+      // Also delete user profile
+      if (student?.user_id) {
+        const { error: userError } = await supabase
+          .from('users')
+          .delete()
+          .eq('id', student.user_id)
+
+        if (userError) {
+          console.error('Failed to delete user profile:', userError)
+        }
+
+        // Note: Deleting the auth account requires admin privileges
+        // This might need to be handled by a server function
+      }
+
+      return true
+    } catch (error) {
+      console.error('Error deleting child:', error)
+      throw error
+    }
+  }
+
   // Add a new child (create student account)
   async addChild(parentId: string, childData: {
     name: string

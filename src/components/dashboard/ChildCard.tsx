@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import EditChildModal from './EditChildModal'
 import {
   Calendar,
   TrendingUp,
@@ -15,7 +16,9 @@ import {
   Clock,
   Star,
   AlertCircle,
-  CalendarDays
+  CalendarDays,
+  Edit,
+  MoreHorizontal
 } from 'lucide-react'
 
 interface ChildCardProps {
@@ -24,6 +27,8 @@ interface ChildCardProps {
   onViewProgress: (childId: string) => void
   onMessageTutor?: (childId: string) => void
   onManageSchedule?: (childId: string) => void
+  onChildUpdated?: () => void
+  onChildDeleted?: () => void
 }
 
 interface ChildStats {
@@ -35,8 +40,9 @@ interface ChildStats {
   lastActive: string
 }
 
-export default function ChildCard({ child, onScheduleLesson, onViewProgress, onMessageTutor, onManageSchedule }: ChildCardProps) {
+export default function ChildCard({ child, onScheduleLesson, onViewProgress, onMessageTutor, onManageSchedule, onChildUpdated, onChildDeleted }: ChildCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [editModalOpen, setEditModalOpen] = useState(false)
   const [stats, setStats] = useState<ChildStats>({
     weeklyHours: 0,
     completedLessons: 0,
@@ -98,26 +104,36 @@ export default function ChildCard({ child, onScheduleLesson, onViewProgress, onM
   const age = getAgeFromBirthDate(child.date_of_birth)
 
   return (
-    <Card className="p-4 hover:shadow-lg transition-all duration-300 border border-gray-200 overflow-hidden">
-      {/* Header Section - Compact */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center space-x-3 flex-1 min-w-0">
-          <Avatar className="h-10 w-10 flex-shrink-0">
-            <AvatarImage src={child.avatar_url || undefined} alt={child.name} />
-            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-sm">
-              {getAvatarFromName(child.name)}
-            </AvatarFallback>
-          </Avatar>
-          <div className="min-w-0 flex-1">
-            <h3 className="text-base font-bold text-gray-900 truncate">{child.name}</h3>
-            <p className="text-xs text-gray-600 truncate">{age}y • {child.grade_level}</p>
+    <>
+      <Card className="p-4 hover:shadow-lg transition-all duration-300 border border-gray-200 overflow-hidden">
+        {/* Header Section - Compact */}
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center space-x-3 flex-1 min-w-0">
+            <Avatar className="h-10 w-10 flex-shrink-0">
+              <AvatarImage src={child.avatar_url || undefined} alt={child.name} />
+              <AvatarFallback className="bg-blue-500 text-white font-semibold text-sm">
+                {getAvatarFromName(child.name)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="min-w-0 flex-1">
+              <h3 className="text-base font-bold text-gray-900 truncate">{child.name}</h3>
+              <p className="text-xs text-gray-600 truncate">{age}y • {child.grade_level}</p>
+            </div>
+          </div>
+          <div className="flex items-center space-x-2 flex-shrink-0">
+            <div className="text-right">
+              <div className="text-lg font-bold text-green-600">{child.progress}%</div>
+              <div className="text-xs text-gray-500">Progress</div>
+            </div>
+            <button
+              onClick={() => setEditModalOpen(true)}
+              className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+              title="Edit child profile"
+            >
+              <Edit className="h-4 w-4" />
+            </button>
           </div>
         </div>
-        <div className="text-right flex-shrink-0">
-          <div className="text-lg font-bold text-green-600">{child.progress}%</div>
-          <div className="text-xs text-gray-500">Progress</div>
-        </div>
-      </div>
 
       {/* Progress Bar - Compact */}
       <div className="mb-3">
@@ -195,7 +211,7 @@ export default function ChildCard({ child, onScheduleLesson, onViewProgress, onM
       <div className="grid grid-cols-2 gap-2 mb-2">
         <Button
           onClick={() => onViewProgress(child.id)}
-          className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white text-xs"
+          className="bg-blue-500 hover:bg-blue-600 text-white text-xs"
           size="sm"
         >
           <TrendingUp className="h-3 w-3 mr-1" />
@@ -203,7 +219,7 @@ export default function ChildCard({ child, onScheduleLesson, onViewProgress, onM
         </Button>
         <Button
           onClick={() => onScheduleLesson(child.id)}
-          className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white text-xs"
+          className="bg-green-500 hover:bg-green-600 text-white text-xs"
           size="sm"
         >
           <Calendar className="h-3 w-3 mr-1" />
@@ -262,5 +278,21 @@ export default function ChildCard({ child, onScheduleLesson, onViewProgress, onM
         </div>
       )}
     </Card>
+
+      {/* Edit Child Modal */}
+      <EditChildModal
+        isOpen={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        child={child}
+        onChildUpdated={() => {
+          onChildUpdated?.()
+          setEditModalOpen(false)
+        }}
+        onChildDeleted={() => {
+          onChildDeleted?.()
+          setEditModalOpen(false)
+        }}
+      />
+    </>
   )
 }
