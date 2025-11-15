@@ -81,29 +81,50 @@ body {
     }
   }
 
-  /* New color scheme utilities */
+  /* Clean color utilities - NO GRADIENTS */
   .blue-primary {
     background-color: #106EBE;
+  }
+
+  .blue-primary-text {
+    color: #106EBE;
   }
 
   .mint-accent {
     background-color: #0FFCBE;
   }
 
-  .blue-gradient {
-    background: linear-gradient(135deg, #106EBE, #0a89cc);
+  .mint-accent-text {
+    color: #0FFCBE;
   }
 
-  .mint-gradient {
-    background: linear-gradient(135deg, #0FFCBE, #00d4a0);
+  /* Role-based dashboard colors */
+  .parent-dashboard {
+    background-color: #106EBE; /* Blue for parents */
   }
 
-  .blue-mint-gradient {
-    background: linear-gradient(135deg, #106EBE, #0FFCBE);
+  .tutor-dashboard {
+    background-color: #0FFCBE; /* Mint for tutors */
+  }
+
+  .admin-dashboard {
+    background-color: #6366f1; /* Indigo for admins */
+  }
+
+  .parent-dashboard-text {
+    color: #106EBE;
+  }
+
+  .tutor-dashboard-text {
+    color: #0FFCBE;
+  }
+
+  .admin-dashboard-text {
+    color: #6366f1;
   }
 
   .clean-bg {
-    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    background-color: #f8fafc;
   }
 
   .card-shadow {

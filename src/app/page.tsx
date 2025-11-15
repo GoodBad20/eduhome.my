@@ -17,8 +17,8 @@ export default function Home() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 blue-gradient rounded-lg"></div>
-                <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-[#106EBE] to-[#0FFCBE] bg-clip-text text-transparent">EduHome.my</h1>
+                <div className="w-8 h-8 blue-primary rounded-lg"></div>
+                <h1 className="text-xl sm:text-2xl font-bold blue-primary-text">EduHome.my</h1>
               </div>
             </div>
 
@@ -39,7 +39,7 @@ export default function Home() {
               </Link>
               <Link
                 href="/auth/signup"
-                className="blue-gradient text-white hover:opacity-90 px-4 py-2 rounded-md text-sm font-medium shadow-lg hover:shadow-xl transition-all"
+                className="blue-primary text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium shadow-lg hover:shadow-xl transition-all"
               >
                 {t('auth.signup')}
               </Link>
@@ -86,7 +86,7 @@ export default function Home() {
                 <Link
                   href="/auth/signup"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-md text-base font-medium blue-gradient text-white hover:opacity-90 transition-all"
+                  className="block px-3 py-2 rounded-md text-base font-medium blue-primary text-white hover:bg-blue-700 transition-all"
                 >
                   {t('auth.signup')}
                 </Link>
@@ -99,7 +99,7 @@ export default function Home() {
       {/* Hero Section */}
       <div className="relative flex flex-col items-center justify-center px-4 py-12 sm:py-16 md:py-20">
         <div className="text-center w-full max-w-4xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-[#106EBE] via-[#106EBE] to-[#0FFCBE] bg-clip-text text-transparent mb-4 sm:mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold blue-primary-text mb-4 sm:mb-6 leading-tight">
             {t('landing.hero.title')}
           </h1>
           <p className="text-lg sm:text-xl text-slate-600 mb-6 sm:mb-8 max-w-3xl mx-auto px-4">
@@ -108,7 +108,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
             <Link
               href="/auth/signup"
-              className="blue-gradient text-white hover:opacity-90 px-6 sm:px-8 py-3 rounded-lg text-base sm:text-lg font-medium shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all w-full sm:w-auto"
+              className="blue-primary text-white hover:bg-blue-700 px-6 sm:px-8 py-3 rounded-lg text-base sm:text-lg font-medium shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all w-full sm:w-auto"
             >
               {t('landing.getStartedFree')}
             </Link>
@@ -123,16 +123,16 @@ export default function Home() {
       </div>
 
       {/* Features Section */}
-      <div id="features" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 bg-gradient-to-b from-transparent to-gray-50/50">
+      <div id="features" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 bg-gray-50/30">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center bg-gradient-to-r from-[#106EBE] to-[#0FFCBE] bg-clip-text text-transparent mb-8 sm:mb-12 px-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center blue-primary-text mb-8 sm:mb-12 px-4">
             {t('landing.features.title')}
           </h2>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {/* For Parents */}
             <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-2xl card-shadow hover:shadow-xl transition-all border border-gray-100">
-              <div className="w-12 h-12 blue-gradient rounded-xl flex items-center justify-center mb-4 shadow-lg">
+              <div className="w-12 h-12 blue-primary rounded-xl flex items-center justify-center mb-4 shadow-lg">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                 </svg>
@@ -148,7 +148,7 @@ export default function Home() {
 
             {/* For Tutors */}
             <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-xl card-shadow hover:shadow-xl transition-all border border-gray-100">
-              <div className="w-12 h-12 mint-gradient rounded-lg flex items-center justify-center mb-4">
+              <div className="w-12 h-12 mint-accent rounded-lg flex items-center justify-center mb-4">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                 </svg>
@@ -182,7 +182,7 @@ export default function Home() {
       </div>
 
       {/* CTA Section */}
-      <div className="blue-gradient py-12 sm:py-16">
+      <div className="blue-primary py-12 sm:py-16">
         <div className="max-w-4xl mx-auto text-center px-4">
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3 sm:mb-4">
             Ready to Transform Your Learning Experience?

@@ -224,7 +224,7 @@ export default function SidebarNavigation({ userRole, user, sidebarOpen, onClose
             px-2 py-0.5 rounded-full text-xs font-semibold flex-shrink-0
             ${isActive
               ? 'bg-white/20 text-white'
-              : 'mint-gradient text-white'
+              : userRole === 'tutor' ? 'bg-white/20 text-white' : 'mint-accent text-white'
             }
           `}>
             {item.badge}

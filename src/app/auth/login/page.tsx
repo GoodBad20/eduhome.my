@@ -54,7 +54,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-6 sm:space-y-8">
         <div>
           <Link href="/" className="flex justify-center">
-            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#106EBE] to-[#0FFCBE] bg-clip-text text-transparent">EduHome.my</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold blue-primary-text">EduHome.my</h1>
           </Link>
           <h2 className="mt-4 sm:mt-6 text-center text-2xl sm:text-3xl font-extrabold text-gray-900">
             {t('auth.login')} to your account
@@ -133,7 +133,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white blue-gradient hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#106EBE] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white blue-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#106EBE] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
