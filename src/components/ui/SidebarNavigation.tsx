@@ -172,15 +172,8 @@ export default function SidebarNavigation({ userRole, user, sidebarOpen, onClose
     return email?.charAt(0).toUpperCase() || 'U'
   }
 
-  const getFallbackGradient = () => {
-    const colors = [
-      'from-blue-400 to-indigo-600',
-      'from-purple-400 to-pink-600',
-      'from-green-400 to-emerald-600',
-      'from-orange-400 to-red-600',
-      'from-teal-400 to-cyan-600'
-    ]
-
+  const getAvatarColor = () => {
+    const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6']
     const name = user?.user_metadata?.full_name || user?.email || 'User'
     const colorIndex = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % colors.length
     return colors[colorIndex]
@@ -224,7 +217,7 @@ export default function SidebarNavigation({ userRole, user, sidebarOpen, onClose
             px-2 py-0.5 rounded-full text-xs font-semibold flex-shrink-0
             ${isActive
               ? 'bg-white/20 text-white'
-              : userRole === 'tutor' ? 'bg-white/20 text-white' : 'mint-accent text-white'
+              : 'bg-red-500 text-white'
             }
           `}>
             {item.badge}
@@ -248,7 +241,7 @@ export default function SidebarNavigation({ userRole, user, sidebarOpen, onClose
 
       {/* User Profile Section */}
       <div className={`px-${isMobile ? 4 : 6} mb-8`}>
-        <div className="bg-gradient-to-r from-white/10 to-blue-10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
+        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
           <div className="flex items-center space-x-4">
             <div className="relative">
               <Avatar className="w-12 h-12 border-2 border-white/30">
@@ -256,7 +249,7 @@ export default function SidebarNavigation({ userRole, user, sidebarOpen, onClose
                   src={user?.user_metadata?.avatar_url || undefined}
                   alt={user?.user_metadata?.full_name || 'User'}
                 />
-                <AvatarFallback className={`bg-gradient-to-br ${getFallbackGradient()} text-white font-bold text-lg`}>
+                <AvatarFallback className="text-white font-bold text-lg" style={{ backgroundColor: getAvatarColor() }}>
                   {getAvatarInitials(user?.user_metadata?.full_name, user?.email)}
                 </AvatarFallback>
               </Avatar>

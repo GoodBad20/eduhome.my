@@ -81,7 +81,7 @@ body {
     }
   }
 
-  /* Clean color utilities - NO GRADIENTS */
+  /* ULTRA-CLEAN color utilities - Only Blue and Gray/White */
   .blue-primary {
     background-color: #106EBE;
   }
@@ -90,37 +90,8 @@ body {
     color: #106EBE;
   }
 
-  .mint-accent {
-    background-color: #0FFCBE;
-  }
-
-  .mint-accent-text {
-    color: #0FFCBE;
-  }
-
-  /* Role-based dashboard colors */
-  .parent-dashboard {
-    background-color: #106EBE; /* Blue for parents */
-  }
-
-  .tutor-dashboard {
-    background-color: #0FFCBE; /* Mint for tutors */
-  }
-
-  .admin-dashboard {
-    background-color: #6366f1; /* Indigo for admins */
-  }
-
-  .parent-dashboard-text {
-    color: #106EBE;
-  }
-
-  .tutor-dashboard-text {
-    color: #0FFCBE;
-  }
-
-  .admin-dashboard-text {
-    color: #6366f1;
+  .dashboard-sidebar {
+    background-color: #106EBE; /* Blue for ALL roles */
   }
 
   .clean-bg {

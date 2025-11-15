@@ -29,11 +29,7 @@ export default function DashboardLayout({ children, userRole }: DashboardLayoutP
           <div className="fixed inset-0 z-40 md:hidden">
             <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
           </div>
-          <div className={`fixed left-0 top-0 z-50 w-64 h-full flex flex-col transform translate-x-0 shadow-2xl ${
-            displayRole === 'parent' ? 'parent-dashboard' :
-            displayRole === 'tutor' ? 'tutor-dashboard' :
-            'admin-dashboard'
-          }`}>
+          <div className="fixed left-0 top-0 z-50 w-64 h-full flex flex-col dashboard-sidebar transform translate-x-0 shadow-2xl">
           {/* Mobile Header */}
           <div className="flex items-center justify-between p-4 border-b border-white/20">
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
@@ -65,11 +61,7 @@ export default function DashboardLayout({ children, userRole }: DashboardLayoutP
 
       {/* Desktop sidebar */}
       <div className="hidden md:fixed md:inset-y-0 md:flex md:w-72 md:flex-col">
-        <div className={`flex flex-col flex-grow pt-5 pb-4 overflow-y-auto shadow-2xl ${
-          displayRole === 'parent' ? 'parent-dashboard' :
-          displayRole === 'tutor' ? 'tutor-dashboard' :
-          'admin-dashboard'
-        }`}>
+        <div className="flex flex-col flex-grow dashboard-sidebar pt-5 pb-4 overflow-y-auto shadow-2xl">
           <SidebarNavigation
             userRole={displayRole}
             user={user}

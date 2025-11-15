@@ -87,7 +87,7 @@ export default function ParentDashboard() {
     <DashboardLayout userRole="parent">
       <div className="p-4 sm:p-6">
         {/* Welcome Header */}
-        <div className="mb-6 sm:mb-8 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-2xl p-4 sm:p-6 md:p-8 text-white shadow-lg">
+        <div className="mb-6 sm:mb-8 blue-primary rounded-2xl p-4 sm:p-6 md:p-8 text-white shadow-lg">
           <div className="flex flex-col sm:flex-row items-center justify-between text-center sm:text-left">
             <div className="mb-4 sm:mb-0">
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2">Welcome back, {user?.user_metadata?.full_name || 'Parent'}! 👋</h1>
@@ -111,7 +111,7 @@ export default function ParentDashboard() {
               </h2>
               <button
                 onClick={() => setAddChildModalOpen(true)}
-                className="bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-xl font-medium hover:from-green-600 hover:to-teal-600 transition-colors flex items-center w-full sm:w-auto justify-center"
+                className="bg-green-500 text-white px-4 py-2 rounded-xl font-medium hover:bg-green-600 transition-colors flex items-center w-full sm:w-auto justify-center"
               >
                 <span className="mr-2">➕</span> Add Child
               </button>
@@ -137,7 +137,7 @@ export default function ParentDashboard() {
             <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">Start your learning journey by adding your first child</p>
             <button
               onClick={() => setAddChildModalOpen(true)}
-              className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-xl font-medium hover:from-blue-600 hover:to-purple-600 transition-colors w-full sm:w-auto"
+              className="blue-primary text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors w-full sm:w-auto"
             >
               Add Your First Child ➕
             </button>
@@ -184,7 +184,7 @@ export default function ParentDashboard() {
                 </div>
                 <button
                   onClick={() => window.location.href = '/dashboard/parent/progress'}
-                  className="mt-4 w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-2 rounded-xl font-medium hover:from-purple-600 hover:to-pink-600 transition-colors text-sm"
+                  className="mt-4 w-full bg-blue-500 text-white py-2 rounded-xl font-medium hover:bg-blue-600 transition-colors text-sm"
                 >
                   View All Achievements 🎯
                 </button>
@@ -198,28 +198,28 @@ export default function ParentDashboard() {
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => children[0] && handleScheduleLesson(children[0].id)}
-                    className="p-4 bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-xl hover:from-blue-600 hover:to-blue-800 transition-all transform hover:scale-105 shadow-md"
+                    className="p-4 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-all transform hover:scale-105 shadow-md"
                   >
                     <div className="text-2xl mb-1">📅</div>
                     <p className="text-xs font-medium">Schedule</p>
                   </button>
                   <button
                     onClick={() => window.location.href = '/dashboard/parent/find-tutors'}
-                    className="p-4 bg-gradient-to-br from-green-500 to-green-700 text-white rounded-xl hover:from-green-600 hover:to-green-800 transition-all transform hover:scale-105 shadow-md"
+                    className="p-4 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-all transform hover:scale-105 shadow-md"
                   >
                     <div className="text-2xl mb-1">👨‍🏫</div>
                     <p className="text-xs font-medium">Find Tutors</p>
                   </button>
                   <button
                     onClick={() => window.location.href = '/dashboard/parent/progress'}
-                    className="p-4 bg-gradient-to-br from-purple-500 to-purple-700 text-white rounded-xl hover:from-purple-600 hover:to-purple-800 transition-all transform hover:scale-105 shadow-md"
+                    className="p-4 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-all transform hover:scale-105 shadow-md"
                   >
                     <div className="text-2xl mb-1">📊</div>
                     <p className="text-xs font-medium">Progress</p>
                   </button>
                   <button
                     onClick={() => window.location.href = '/dashboard/parent/messages'}
-                    className="p-4 bg-gradient-to-br from-yellow-500 to-orange-600 text-white rounded-xl hover:from-yellow-600 hover:to-orange-700 transition-all transform hover:scale-105 shadow-md"
+                    className="p-4 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-all transform hover:scale-105 shadow-md"
                   >
                     <div className="text-2xl mb-1">💬</div>
                     <p className="text-xs font-medium">Messages</p>
@@ -228,7 +228,7 @@ export default function ParentDashboard() {
               </div>
 
               {/* Learning Insights */}
-              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl shadow-lg p-6 border border-indigo-100">
+              <div className="bg-gray-50 rounded-2xl shadow-lg p-6 border border-gray-200">
                 <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
                   <span className="mr-2">💡</span> Learning Insights
                 </h2>
