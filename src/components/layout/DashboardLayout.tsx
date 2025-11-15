@@ -22,14 +22,14 @@ export default function DashboardLayout({ children, userRole }: DashboardLayoutP
   const displayRole = isAdmin ? 'admin' : userRole
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen clean-bg">
       {/* Mobile sidebar */}
       {sidebarOpen && (
         <>
           <div className="fixed inset-0 z-40 md:hidden">
             <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
           </div>
-          <div className="fixed left-0 top-0 z-50 w-64 h-full flex flex-col bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-700 transform translate-x-0 shadow-2xl">
+          <div className="fixed left-0 top-0 z-50 w-64 h-full flex flex-col blue-gradient transform translate-x-0 shadow-2xl">
           {/* Mobile Header */}
           <div className="flex items-center justify-between p-4 border-b border-white/20">
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
@@ -61,7 +61,7 @@ export default function DashboardLayout({ children, userRole }: DashboardLayoutP
 
       {/* Desktop sidebar */}
       <div className="hidden md:fixed md:inset-y-0 md:flex md:w-72 md:flex-col">
-        <div className="flex flex-col flex-grow bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-700 pt-5 pb-4 overflow-y-auto shadow-2xl">
+        <div className="flex flex-col flex-grow blue-gradient pt-5 pb-4 overflow-y-auto shadow-2xl">
           <SidebarNavigation
             userRole={displayRole}
             user={user}

@@ -203,7 +203,7 @@ export default function SidebarNavigation({ userRole, user, sidebarOpen, onClose
           text-sm font-medium transition-all duration-200
           ${isSubItem ? 'ml-6' : ''}
           ${isActive
-            ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg'
+            ? 'bg-white/20 text-white shadow-lg'
             : 'text-white/80 hover:bg-white/10 hover:text-white'
           }
           ${isMobile ? 'touch-manipulation min-h-[44px]' : ''}
@@ -224,7 +224,7 @@ export default function SidebarNavigation({ userRole, user, sidebarOpen, onClose
             px-2 py-0.5 rounded-full text-xs font-semibold flex-shrink-0
             ${isActive
               ? 'bg-white/20 text-white'
-              : 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white'
+              : 'mint-gradient text-white'
             }
           `}>
             {item.badge}
@@ -320,7 +320,7 @@ export default function SidebarNavigation({ userRole, user, sidebarOpen, onClose
             await supabase.auth.signOut()
             router.push('/')
           }}
-          className="w-full flex items-center justify-center px-4 py-3 text-sm font-medium rounded-xl bg-gradient-to-r from-red-500/20 to-red-600/20 hover:from-red-500/30 hover:to-red-600/30 text-red-100 border border-red-400/30 hover:border-red-400/50 transition-all backdrop-blur-sm"
+          className="w-full flex items-center justify-center px-4 py-3 text-sm font-medium rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white border border-white/20 transition-all backdrop-blur-sm"
         >
           <span className="mr-2">🚪</span>
           {t('nav.logout')}

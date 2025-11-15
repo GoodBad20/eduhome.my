@@ -80,4 +80,37 @@ body {
       @apply mx-2 p-3;
     }
   }
+
+  /* New color scheme utilities */
+  .blue-primary {
+    background-color: #106EBE;
+  }
+
+  .mint-accent {
+    background-color: #0FFCBE;
+  }
+
+  .blue-gradient {
+    background: linear-gradient(135deg, #106EBE, #0a89cc);
+  }
+
+  .mint-gradient {
+    background: linear-gradient(135deg, #0FFCBE, #00d4a0);
+  }
+
+  .blue-mint-gradient {
+    background: linear-gradient(135deg, #106EBE, #0FFCBE);
+  }
+
+  .clean-bg {
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  }
+
+  .card-shadow {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .card-shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
 }
