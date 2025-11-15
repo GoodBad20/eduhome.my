@@ -29,7 +29,7 @@ export default function DashboardLayout({ children, userRole }: DashboardLayoutP
           <div className="fixed inset-0 z-40 md:hidden">
             <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
           </div>
-          <div className="fixed left-0 top-0 z-50 w-72 sm:w-80 h-full flex flex-col bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-700 transform translate-x-0 shadow-2xl">
+          <div className="fixed left-0 top-0 z-50 w-64 h-full flex flex-col bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-700 transform translate-x-0 shadow-2xl">
           {/* Mobile Header */}
           <div className="flex items-center justify-between p-4 border-b border-white/20">
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
@@ -79,7 +79,7 @@ export default function DashboardLayout({ children, userRole }: DashboardLayoutP
           <div className="flex items-center justify-between px-3 sm:px-4 py-3 sm:py-4">
             <button
               type="button"
-              className="md:hidden text-gray-600 hover:text-gray-900 p-3 rounded-lg hover:bg-gray-100 transition-all active:scale-95"
+              className="md:hidden text-gray-600 hover:text-gray-900 p-4 rounded-xl hover:bg-gray-100 transition-all active:scale-95 touch-manipulation"
               onClick={() => setSidebarOpen(true)}
               aria-label="Open sidebar menu"
             >
@@ -89,14 +89,14 @@ export default function DashboardLayout({ children, userRole }: DashboardLayoutP
             </button>
 
             <div className="flex-1 md:hidden">
-              <div className="text-center">
-                <h2 className="text-base sm:text-lg font-semibold text-gray-800">Dashboard</h2>
+              <div className="text-center px-4">
+                <h2 className="text-base sm:text-lg font-semibold text-gray-800 truncate">Dashboard</h2>
               </div>
             </div>
 
             <div className="hidden md:flex items-center space-x-4">
               <LanguageToggle />
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-gray-600 hidden lg:block">
                 Good to see you, <span className="font-semibold text-gray-900">{user?.user_metadata?.full_name || 'there'}</span>! 👋
               </div>
             </div>

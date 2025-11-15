@@ -199,28 +199,29 @@ export default function SidebarNavigation({ userRole, user, sidebarOpen, onClose
         onClick={isMobile ? onClose : undefined}
         className={`
           group relative flex items-center justify-between
-          px-${isSubItem ? '4' : '3'} py-2.5 rounded-xl
+          px-${isSubItem ? '4' : '3'} py-3 rounded-xl
           text-sm font-medium transition-all duration-200
           ${isSubItem ? 'ml-6' : ''}
           ${isActive
             ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg'
             : 'text-white/80 hover:bg-white/10 hover:text-white'
           }
+          ${isMobile ? 'touch-manipulation min-h-[44px]' : ''}
         `}
       >
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3 min-w-0 flex-1">
           <div className={`
             ${isActive ? 'text-white' : 'text-blue-200'}
-            group-hover:text-white transition-colors
+            group-hover:text-white transition-colors flex-shrink-0
           `}>
             {IconComponent && <IconComponent className="h-5 w-5" />}
             {!IconComponent && <span className="text-lg">{item.icon}</span>}
           </div>
-          <span className="font-medium">{item.name}</span>
+          <span className="font-medium truncate">{item.name}</span>
         </div>
         {item.badge && (
           <span className={`
-            px-2 py-0.5 rounded-full text-xs font-semibold
+            px-2 py-0.5 rounded-full text-xs font-semibold flex-shrink-0
             ${isActive
               ? 'bg-white/20 text-white'
               : 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white'

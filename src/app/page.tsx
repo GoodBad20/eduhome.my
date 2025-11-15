@@ -123,15 +123,15 @@ export default function Home() {
       </div>
 
       {/* Features Section */}
-      <div id="features" className="py-12 sm:py-16 md:py-20 px-4 bg-gradient-to-b from-transparent to-blue-50/30">
+      <div id="features" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 bg-gradient-to-b from-transparent to-blue-50/30">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-8 sm:mb-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-8 sm:mb-12 px-4">
             {t('landing.features.title')}
           </h2>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {/* For Parents */}
-            <div className="bg-gradient-to-br from-white to-blue-50/50 p-6 sm:p-8 rounded-2xl shadow-xl border border-blue-100 hover:shadow-2xl transition-all">
+            <div className="bg-gradient-to-br from-white to-blue-50/50 p-4 sm:p-6 lg:p-8 rounded-2xl shadow-xl border border-blue-100 hover:shadow-2xl transition-all">
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mb-4 shadow-lg">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
@@ -147,7 +147,7 @@ export default function Home() {
             </div>
 
             {/* For Tutors */}
-            <div className="bg-white p-6 sm:p-8 rounded-xl shadow-lg hover:shadow-xl transition-all">
+            <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-lg hover:shadow-xl transition-all">
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
                 <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
@@ -163,7 +163,7 @@ export default function Home() {
             </div>
 
             {/* For Students */}
-            <div className="bg-white p-6 sm:p-8 rounded-xl shadow-lg hover:shadow-xl transition-all">
+            <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-lg hover:shadow-xl transition-all">
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
                 <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
@@ -200,7 +200,7 @@ export default function Home() {
       </div>
 
       {/* Status Banner */}
-      <div className="bg-green-50 border-l-4 border-green-400 p-4 mx-4 sm:mx-6 lg:mx-8 mt-6 sm:mt-8">
+      <div className="bg-green-50 border-l-4 border-green-400 p-4 mx-2 sm:mx-4 lg:mx-8 mt-6 sm:mt-8">
         <div className="flex flex-col sm:flex-row">
           <div className="flex-shrink-0 mb-2 sm:mb-0">
             <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">

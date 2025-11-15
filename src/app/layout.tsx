@@ -27,6 +27,12 @@ export const metadata = {
   alternates: {
     canonical: '/',
   },
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
   openGraph: {
     title: 'EduHome.my - Premier Home Tuition Platform in Malaysia',
     description: 'Connect with expert tutors in Malaysia for personalized home tuition and online learning.',
@@ -72,7 +78,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
+        <meta name="theme-color" content="#2563eb" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="EduHome.my" />
+      </head>
+      <body className={`${inter.className} antialiased`}>
         <ErrorBoundary>
           <ToastProvider>
             <LanguageProvider>
