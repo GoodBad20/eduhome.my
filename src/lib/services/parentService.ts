@@ -596,7 +596,59 @@ class ParentService {
         .order('date', { ascending: true })
         .order('start_time', { ascending: true })
 
-      if (error) throw error
+      if (error) {
+        // If schedule_activities table doesn't exist, use sessions table as fallback
+        console.log('schedule_activities table not found, using sessions table as fallback')
+
+        const { data: sessionsData, error: sessionsError } = await supabase
+          .from('sessions')
+          .select('*')
+          .eq('student_id', childId)
+          .gte('scheduled_time', `${startDate}T00:00:00Z`)
+          .lte('scheduled_time', `${endDate}T23:59:59Z`)
+          .order('scheduled_time', { ascending: true })
+
+        if (sessionsError) throw sessionsError
+
+        // Convert sessions to ScheduleActivity format
+        const activities: ScheduleActivity[] = (sessionsData || []).map(session => {
+          const sessionDate = session.scheduled_time.split('T')[0]
+          const sessionTime = session.scheduled_time.split('T')[1].split(':').slice(0, 2).join(':')
+
+          // Calculate end time based on duration
+          const [hours, minutes] = sessionTime.split(':').map(Number)
+          const totalMinutes = hours * 60 + minutes + (session.duration_minutes || 60)
+          const endHours = Math.floor(totalMinutes / 60)
+          const endMinutes = totalMinutes % 60
+          const endTime = `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`
+
+          return {
+            id: session.id,
+            child_id: session.student_id,
+            child_name: '', // Will be filled by caller
+            title: session.notes || session.subject || 'Activity',
+            description: session.notes,
+            activity_type: session.subject || 'custom',
+            subject: session.subject,
+            date: sessionDate,
+            start_time: sessionTime,
+            end_time: endTime,
+            duration: session.duration_minutes || 60,
+            location: null,
+            status: session.status as any || 'scheduled',
+            priority: 'medium',
+            is_recurring: false,
+            recurrence_pattern: null,
+            reminders: null,
+            notes: session.notes,
+            color: '#106EBE',
+            created_at: session.created_at,
+            updated_at: session.updated_at
+          }
+        })
+
+        return activities
+      }
 
       return this.formatScheduleActivities(data || [])
     } catch (error) {
@@ -627,7 +679,60 @@ class ParentService {
         .order('date', { ascending: true })
         .order('start_time', { ascending: true })
 
-      if (error) throw error
+      if (error) {
+        // If schedule_activities table doesn't exist, use sessions table as fallback
+        console.log('schedule_activities table not found, using sessions table as fallback')
+
+        const { data: sessionsData, error: sessionsError } = await supabase
+          .from('sessions')
+          .select('*')
+          .in('student_id', childIds)
+          .gte('scheduled_time', `${startDate}T00:00:00Z`)
+          .lte('scheduled_time', `${endDate}T23:59:59Z`)
+          .order('scheduled_time', { ascending: true })
+
+        if (sessionsError) throw sessionsError
+
+        // Convert sessions to ScheduleActivity format
+        const activities: ScheduleActivity[] = (sessionsData || []).map(session => {
+          const sessionDate = session.scheduled_time.split('T')[0]
+          const sessionTime = session.scheduled_time.split('T')[1].split(':').slice(0, 2).join(':')
+          const child = children.find(c => c.id === session.student_id)
+
+          // Calculate end time based on duration
+          const [hours, minutes] = sessionTime.split(':').map(Number)
+          const totalMinutes = hours * 60 + minutes + (session.duration_minutes || 60)
+          const endHours = Math.floor(totalMinutes / 60)
+          const endMinutes = totalMinutes % 60
+          const endTime = `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`
+
+          return {
+            id: session.id,
+            child_id: session.student_id,
+            child_name: child?.name || 'Unknown',
+            title: session.notes || session.subject || 'Activity',
+            description: session.notes,
+            activity_type: session.subject || 'custom',
+            subject: session.subject,
+            date: sessionDate,
+            start_time: sessionTime,
+            end_time: endTime,
+            duration: session.duration_minutes || 60,
+            location: null,
+            status: session.status as any || 'scheduled',
+            priority: 'medium',
+            is_recurring: false,
+            recurrence_pattern: null,
+            reminders: null,
+            notes: session.notes,
+            color: '#106EBE',
+            created_at: session.created_at,
+            updated_at: session.updated_at
+          }
+        })
+
+        return activities
+      }
 
       return this.formatScheduleActivities(data || [])
     } catch (error) {
@@ -667,6 +772,7 @@ class ParentService {
   // Create a new schedule activity
   async createScheduleActivity(activityData: Omit<ScheduleActivity, 'id' | 'created_at' | 'updated_at'>): Promise<ScheduleActivity> {
     try {
+      // First try to use the schedule_activities table
       const { data, error } = await supabase
         .from('schedule_activities')
         .insert([{
@@ -677,7 +783,57 @@ class ParentService {
         .select()
         .single()
 
-      if (error) throw error
+      if (error) {
+        // If schedule_activities table doesn't exist, use sessions table as fallback
+        console.log('schedule_activities table not found, using sessions table as fallback')
+
+        const sessionData = {
+          student_id: activityData.child_id,
+          subject: activityData.subject || activityData.activity_type,
+          tutor_id: null, // Set to null for general activities
+          scheduled_time: `${activityData.date}T${activityData.start_time}:00Z`,
+          duration_minutes: activityData.duration || 60,
+          status: activityData.status || 'scheduled',
+          notes: activityData.description || activityData.title,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+
+        const { data: sessionResult, error: sessionError } = await supabase
+          .from('sessions')
+          .insert([sessionData])
+          .select()
+          .single()
+
+        if (sessionError) throw sessionError
+
+        // Convert session result back to ScheduleActivity format
+        const formattedActivity: ScheduleActivity = {
+          id: sessionResult.id,
+          child_id: sessionResult.student_id,
+          child_name: activityData.child_name,
+          title: activityData.title,
+          description: activityData.description,
+          activity_type: activityData.activity_type,
+          subject: sessionResult.subject,
+          date: activityData.date,
+          start_time: activityData.start_time,
+          end_time: activityData.end_time,
+          duration: sessionResult.duration_minutes,
+          location: activityData.location,
+          status: sessionResult.status as any,
+          priority: activityData.priority,
+          is_recurring: activityData.is_recurring,
+          recurrence_pattern: activityData.recurrence_pattern,
+          reminders: activityData.reminders,
+          notes: sessionResult.notes,
+          color: activityData.color,
+          created_at: sessionResult.created_at,
+          updated_at: sessionResult.updated_at
+        }
+
+        return formattedActivity
+      }
 
       return this.formatScheduleActivities([data])[0]
     } catch (error) {
