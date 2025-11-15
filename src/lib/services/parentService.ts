@@ -1185,6 +1185,160 @@ class ParentService {
       }
     }
   }
+
+  // Calculate comprehensive child progress
+  async getChildProgress(childId: string): Promise<{
+    overall_progress: number
+    subject_progress: { [subject: string]: number }
+    assignment_stats: {
+      total: number
+      completed: number
+      average_score: number
+      pending: number
+    }
+    activity_stats: {
+      total_activities: number
+      completed_activities: number
+      attendance_rate: number
+      most_active_subject: string
+    }
+    recent_performance: {
+      trend: 'improving' | 'stable' | 'declining'
+      score_change: number
+    }
+    next_milestone: string
+  }> {
+    try {
+      // Get assignments for the child
+      const assignments = await assignmentService.getChildAssignments(childId)
+      const completedAssignments = assignments.filter(a => a.status === 'reviewed' && a.score !== null)
+      const averageScore = completedAssignments.length > 0
+        ? completedAssignments.reduce((sum, a) => sum + (a.score || 0), 0) / completedAssignments.length
+        : 0
+
+      // Get activities for the child (last 30 days)
+      const today = new Date()
+      const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000)
+      const activities = await this.getChildSchedule(
+        childId,
+        thirtyDaysAgo.toISOString().split('T')[0],
+        today.toISOString().split('T')[0]
+      )
+      const completedActivities = activities.filter(a => a.status === 'completed')
+      const attendanceRate = activities.length > 0 ? (completedActivities.length / activities.length) * 100 : 0
+
+      // Calculate subject-specific progress
+      const subjectProgress: { [subject: string]: number } = {}
+      const subjectScores: { [subject: string]: number[] } = {}
+
+      completedAssignments.forEach(assignment => {
+        if (assignment.score !== null) {
+          if (!subjectScores[assignment.subject]) {
+            subjectScores[assignment.subject] = []
+          }
+          subjectScores[assignment.subject].push(assignment.score)
+        }
+      })
+
+      Object.keys(subjectScores).forEach(subject => {
+        const scores = subjectScores[subject]
+        subjectProgress[subject] = Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length)
+      })
+
+      // Calculate most active subject from activities
+      const subjectCounts: { [subject: string]: number } = {}
+      activities.forEach(activity => {
+        const subject = activity.subject || 'General'
+        subjectCounts[subject] = (subjectCounts[subject] || 0) + 1
+      })
+      const mostActiveSubject = Object.keys(subjectCounts).reduce((a, b) =>
+        subjectCounts[a] > subjectCounts[b] ? a : b, Object.keys(subjectCounts)[0] || 'Mathematics')
+
+      // Calculate performance trend (compare last 10 assignments with previous 10)
+      const recentAssignments = completedAssignments.slice(-10)
+      const previousAssignments = completedAssignments.slice(-20, -10)
+      const recentAverage = recentAssignments.length > 0
+        ? recentAssignments.reduce((sum, a) => sum + (a.score || 0), 0) / recentAssignments.length
+        : 0
+      const previousAverage = previousAssignments.length > 0
+        ? previousAssignments.reduce((sum, a) => sum + (a.score || 0), 0) / previousAssignments.length
+        : 0
+
+      let trend: 'improving' | 'stable' | 'declining' = 'stable'
+      let scoreChange = 0
+
+      if (recentAssignments.length >= 5 && previousAssignments.length >= 5) {
+        scoreChange = Math.round(recentAverage - previousAverage)
+        if (scoreChange > 5) trend = 'improving'
+        else if (scoreChange < -5) trend = 'declining'
+      }
+
+      // Calculate overall progress (combination of assignment scores and activity completion)
+      const assignmentProgress = Math.min(100, (averageScore / 100) * 60) // 60% weight
+      const activityProgress = Math.min(100, attendanceRate * 0.4) // 40% weight
+      const overallProgress = Math.round(assignmentProgress + activityProgress)
+
+      // Determine next milestone
+      let nextMilestone = 'Keep up the great work!'
+      if (overallProgress >= 90) {
+        nextMilestone = 'Excellent! Consider advanced topics.'
+      } else if (overallProgress >= 80) {
+        nextMilestone = 'Great progress! Aim for 90% consistency.'
+      } else if (overallProgress >= 70) {
+        nextMilestone = 'Good work! Focus on completing all activities.'
+      } else if (overallProgress >= 60) {
+        nextMilestone = 'Keep improving! Submit assignments on time.'
+      } else {
+        nextMilestone = 'Focus on completing daily activities and assignments.'
+      }
+
+      return {
+        overall_progress: overallProgress,
+        subject_progress: subjectProgress,
+        assignment_stats: {
+          total: assignments.length,
+          completed: completedAssignments.length,
+          average_score: Math.round(averageScore),
+          pending: assignments.filter(a => ['assigned', 'in_progress'].includes(a.status)).length
+        },
+        activity_stats: {
+          total_activities: activities.length,
+          completed_activities: completedActivities.length,
+          attendance_rate: Math.round(attendanceRate),
+          most_active_subject: mostActiveSubject
+        },
+        recent_performance: {
+          trend,
+          score_change: scoreChange
+        },
+        next_milestone: nextMilestone
+      }
+    } catch (error) {
+      console.error('Error calculating child progress:', error)
+      // Return default values on error
+      return {
+        overall_progress: 0,
+        subject_progress: {},
+        assignment_stats: {
+          total: 0,
+          completed: 0,
+          average_score: 0,
+          pending: 0
+        },
+        activity_stats: {
+          total_activities: 0,
+          completed_activities: 0,
+          attendance_rate: 0,
+          most_active_subject: 'Mathematics'
+        },
+        recent_performance: {
+          trend: 'stable',
+          score_change: 0
+        },
+        next_milestone: 'Start engaging in activities to see progress'
+      }
+    }
+  }
 }
 
 export const parentService = new ParentService()

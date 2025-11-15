@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSupabase } from '@/components/providers/SupabaseProvider'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { parentService, ChildData, AchievementData } from '@/lib/services/parentService'
+import { TrendingUp, TrendingDown, Minus, Target, Award, Clock, BookOpen } from 'lucide-react'
 
 export default function ProgressPage() {
   const { user } = useSupabase()
@@ -11,6 +12,7 @@ export default function ProgressPage() {
   const [children, setChildren] = useState<ChildData[]>([])
   const [selectedChild, setSelectedChild] = useState<ChildData | null>(null)
   const [achievements, setAchievements] = useState<AchievementData[]>([])
+  const [childProgress, setChildProgress] = useState<any>(null)
 
   useEffect(() => {
     if (user) {
@@ -27,7 +29,8 @@ export default function ProgressPage() {
       setChildren(childrenData)
       if (childrenData.length > 0) {
         setSelectedChild(childrenData[0])
-        loadAchievements(childrenData[0].id)
+        await loadChildProgress(childrenData[0].id)
+        loadAchievements(user?.id || '')
       }
     } catch (error) {
       console.error('Error loading children:', error)
@@ -36,18 +39,38 @@ export default function ProgressPage() {
     }
   }
 
-  const loadAchievements = async (childId: string) => {
+  const loadChildProgress = async (childId: string) => {
     try {
-      const achievementsData = await parentService.getAchievements(user?.id || '')
+      const progressData = await parentService.getChildProgress(childId)
+      setChildProgress(progressData)
+    } catch (error) {
+      console.error('Error loading child progress:', error)
+    }
+  }
+
+  const loadAchievements = async (parentId: string) => {
+    try {
+      const achievementsData = await parentService.getAchievements(parentId)
       setAchievements(achievementsData)
     } catch (error) {
       console.error('Error loading achievements:', error)
     }
   }
 
-  const handleChildSelect = (child: ChildData) => {
+  const handleChildSelect = async (child: ChildData) => {
     setSelectedChild(child)
-    loadAchievements(child.id)
+    await loadChildProgress(child.id)
+  }
+
+  const getTrendIcon = (trend: string) => {
+    switch (trend) {
+      case 'improving':
+        return <TrendingUp className="h-4 w-4 text-green-600" />
+      case 'declining':
+        return <TrendingDown className="h-4 w-4 text-red-600" />
+      default:
+        return <Minus className="h-4 w-4 text-gray-600" />
+    }
   }
 
   if (loading) {
@@ -117,28 +140,32 @@ export default function ProgressPage() {
                       <h3 className="text-lg font-semibold">Overall Progress</h3>
                       <span className="text-3xl">📈</span>
                     </div>
-                    <div className="text-3xl font-bold mb-2">{selectedChild.progress || 75}%</div>
-                    <p className="text-white opacity-90">Great improvement this month!</p>
+                    <div className="text-3xl font-bold mb-2">{childProgress?.overall_progress || 0}%</div>
+                    <p className="text-white opacity-90">{childProgress?.next_milestone || 'Keep up the great work!'}</p>
                   </div>
 
-                  {/* Next Lesson */}
+                  {/* Assignment Stats */}
                   <div className="bg-gradient-to-br from-green-500 to-teal-600 rounded-2xl p-6 text-white">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold">Next Lesson</h3>
-                      <span className="text-3xl">📅</span>
+                      <h3 className="text-lg font-semibold">Assignments</h3>
+                      <span className="text-3xl">📝</span>
                     </div>
-                    <div className="text-xl font-bold mb-2">Today, 3:00 PM</div>
-                    <p className="text-white opacity-90">Mathematics with Ms. Chen</p>
+                    <div className="text-xl font-bold mb-2">{childProgress?.assignment_stats?.average_score || 0}% Avg</div>
+                    <p className="text-white opacity-90">
+                      {childProgress?.assignment_stats?.completed || 0}/{childProgress?.assignment_stats?.total || 0} completed
+                    </p>
                   </div>
 
-                  {/* Current Grade */}
+                  {/* Activity Performance */}
                   <div className="bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl p-6 text-white">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold">Grade Level</h3>
-                      <span className="text-3xl">🎓</span>
+                      <h3 className="text-lg font-semibold">Activities</h3>
+                      <span className="text-3xl">⭐</span>
                     </div>
-                    <div className="text-3xl font-bold mb-2">{selectedChild.grade_level}</div>
-                    <p className="text-orange-100">On track for promotion</p>
+                    <div className="text-xl font-bold mb-2">{childProgress?.activity_stats?.attendance_rate || 0}% Rate</div>
+                    <p className="text-white opacity-90">
+                      {childProgress?.activity_stats?.completed_activities || 0}/{childProgress?.activity_stats?.total_activities || 0} completed
+                    </p>
                   </div>
                 </div>
 
@@ -150,22 +177,72 @@ export default function ProgressPage() {
                       Subject Progress
                     </h3>
                     <div className="space-y-4">
-                      {selectedChild.subjects?.map((subject, index) => (
-                        <div key={subject}>
-                          <div className="flex justify-between mb-2">
-                            <span className="text-sm font-medium text-gray-700">{subject}</span>
-                            <span className="text-sm text-gray-500">{65 + index * 10}%</span>
+                      {Object.keys(childProgress?.subject_progress || {}).length > 0 ? (
+                        Object.entries(childProgress.subject_progress).map(([subject, progress]) => (
+                          <div key={subject}>
+                            <div className="flex justify-between mb-2">
+                              <span className="text-sm font-medium text-gray-700">{subject}</span>
+                              <span className="text-sm text-gray-500">{progress}%</span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-3">
+                              <div
+                                className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500"
+                                style={{ width: `${progress}%` }}
+                              ></div>
+                            </div>
                           </div>
-                          <div className="w-full bg-gray-200 rounded-full h-3">
-                            <div
-                              className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500"
-                              style={{ width: `${65 + index * 10}%` }}
-                            ></div>
+                        ))
+                      ) : (
+                        <p className="text-gray-500">No subject data available yet</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Performance Trends */}
+                  <div className="bg-white rounded-2xl shadow-lg p-6">
+                    <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                      <span className="text-2xl mr-2">📊</span>
+                      Performance Trends
+                    </h3>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          {getTrendIcon(childProgress?.recent_performance?.trend || 'stable')}
+                          <div>
+                            <p className="font-medium text-gray-900">Recent Performance</p>
+                            <p className="text-sm text-gray-600">
+                              {childProgress?.recent_performance?.trend === 'improving' ? 'Improving' :
+                               childProgress?.recent_performance?.trend === 'declining' ? 'Declining' : 'Stable'}
+                            </p>
                           </div>
                         </div>
-                      )) || (
-                        <p className="text-gray-500">No subjects assigned yet</p>
-                      )}
+                        <div className="text-right">
+                          <p className="text-lg font-bold text-gray-900">
+                            {childProgress?.recent_performance?.score_change > 0 ? '+' : ''}
+                            {childProgress?.recent_performance?.score_change || 0}%
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="p-4 bg-blue-50 rounded-lg">
+                        <div className="flex items-center space-x-3 mb-2">
+                          <Target className="h-5 w-5 text-blue-600" />
+                          <p className="font-medium text-blue-900">Most Active Subject</p>
+                        </div>
+                        <p className="text-blue-800">
+                          {childProgress?.activity_stats?.most_active_subject || 'Mathematics'}
+                        </p>
+                      </div>
+
+                      <div className="p-4 bg-green-50 rounded-lg">
+                        <div className="flex items-center space-x-3 mb-2">
+                          <Award className="h-5 w-5 text-green-600" />
+                          <p className="font-medium text-green-900">Pending Assignments</p>
+                        </div>
+                        <p className="text-green-800">
+                          {childProgress?.assignment_stats?.pending || 0} assignments to complete
+                        </p>
+                      </div>
                     </div>
                   </div>
 

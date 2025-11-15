@@ -1,10 +1,1 @@
-{
-  "components/dashboard/AddChildModal.tsx -> @/lib/supabase": {
-    "id": "components/dashboard/AddChildModal.tsx -> @/lib/supabase",
-    "files": []
-  },
-  "components/ui/SidebarNavigation.tsx -> @/lib/supabase": {
-    "id": "components/ui/SidebarNavigation.tsx -> @/lib/supabase",
-    "files": []
-  }
-}
+{}

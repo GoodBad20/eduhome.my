@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{\"components/dashboard/AddChildModal.tsx -> @/lib/supabase\":{\"id\":\"components/dashboard/AddChildModal.tsx -> @/lib/supabase\",\"files\":[]},\"components/ui/SidebarNavigation.tsx -> @/lib/supabase\":{\"id\":\"components/ui/SidebarNavigation.tsx -> @/lib/supabase\",\"files\":[]}}"
+self.__REACT_LOADABLE_MANIFEST="{}"

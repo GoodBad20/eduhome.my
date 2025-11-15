@@ -390,6 +390,81 @@ class AssignmentService {
     }
   }
 
+  // Get assignments for a parent (for their children)
+  async getParentAssignments(parentId: string): Promise<Assignment[]> {
+    try {
+      // Get all children for this parent
+      const { data: children, error: childrenError } = await supabase
+        .from('students')
+        .select('id, full_name')
+        .eq('parent_id', parentId)
+
+      if (childrenError) throw childrenError
+
+      if (children.length === 0) return []
+
+      const childIds = children.map(child => child.id)
+
+      // Get assignments for all children
+      const { data: assignments, error } = await supabase
+        .from('assignments')
+        .select(`
+          *,
+          tutor:tutors(
+            id,
+            full_name
+          )
+        `)
+        .in('student_id', childIds)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+
+      return assignments.map(assignment => {
+        const child = children.find(c => c.id === assignment.student_id)
+        return {
+          ...assignment,
+          student_name: child?.full_name || 'Unknown Student',
+          parent_name: 'Current Parent'
+        }
+      })
+    } catch (error) {
+      console.error('Error fetching parent assignments:', error)
+      return []
+    }
+  }
+
+  // Get assignments for a specific child
+  async getChildAssignments(childId: string): Promise<Assignment[]> {
+    try {
+      const { data: assignments, error } = await supabase
+        .from('assignments')
+        .select(`
+          *,
+          tutor:tutors(
+            id,
+            full_name
+          ),
+          student:students(
+            id,
+            full_name
+          )
+        `)
+        .eq('student_id', childId)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+
+      return assignments.map(assignment => ({
+        ...assignment,
+        student_name: assignment.student?.full_name || 'Unknown Student'
+      }))
+    } catch (error) {
+      console.error('Error fetching child assignments:', error)
+      return []
+    }
+  }
+
   // Get assignment statistics
   async getAssignmentStats(tutorId: string): Promise<{
     total: number
@@ -426,6 +501,53 @@ class AssignmentService {
         reviewed: 0,
         completed: 0,
         overdue: 0
+      }
+    }
+  }
+
+  // Get parent assignment statistics
+  async getParentAssignmentStats(parentId: string): Promise<{
+    total: number
+    pending: number
+    in_progress: number
+    submitted: number
+    completed: number
+    overdue: number
+    average_score: number
+  }> {
+    try {
+      const assignments = await this.getParentAssignments(parentId)
+      const today = new Date()
+
+      const overdue = assignments.filter(assignment =>
+        new Date(assignment.due_date) < today &&
+        ['assigned', 'in_progress'].includes(assignment.status)
+      )
+
+      const completedAssignments = assignments.filter(a => a.status === 'reviewed' && a.score !== null)
+      const averageScore = completedAssignments.length > 0
+        ? completedAssignments.reduce((sum, a) => sum + (a.score || 0), 0) / completedAssignments.length
+        : 0
+
+      return {
+        total: assignments.length,
+        pending: assignments.filter(a => a.status === 'assigned').length,
+        in_progress: assignments.filter(a => a.status === 'in_progress').length,
+        submitted: assignments.filter(a => a.status === 'submitted').length,
+        completed: assignments.filter(a => a.status === 'reviewed').length,
+        overdue: overdue.length,
+        average_score: Math.round(averageScore)
+      }
+    } catch (error) {
+      console.error('Error getting parent assignment stats:', error)
+      return {
+        total: 0,
+        pending: 0,
+        in_progress: 0,
+        submitted: 0,
+        completed: 0,
+        overdue: 0,
+        average_score: 0
       }
     }
   }
