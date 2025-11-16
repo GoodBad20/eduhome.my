@@ -230,13 +230,13 @@ export default function CookiePolicyPage() {
           {/* Quick Actions */}
           <div className="p-6 bg-amber-50 border-b border-amber-200">
             <div className="flex flex-wrap gap-4 justify-center">
-              <button
-                onClick={() => window.open('/dashboard/parent/settings', '_blank')}
+              <Link
+                href="/dashboard/parent/settings"
                 className="inline-flex items-center px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
               >
                 <Settings className="h-4 w-4 mr-2" />
                 Update Cookie Preferences
-              </button>
+              </Link>
               <Link
                 href="/privacy"
                 className="inline-flex items-center px-4 py-2 bg-white text-amber-600 border border-amber-300 rounded-lg hover:bg-amber-50 transition-colors"
@@ -358,13 +358,12 @@ export default function CookiePolicyPage() {
 
         {/* Back to Top */}
         <div className="mt-8 text-center">
-          <button
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+          <div
+            className="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors cursor-pointer"
           >
             <Cookie className="h-4 w-4 mr-2" />
             Back to Top
-          </button>
+          </div>
         </div>
       </div>
     </div>
