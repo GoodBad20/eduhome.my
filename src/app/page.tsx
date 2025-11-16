@@ -26,53 +26,53 @@ import {
 } from 'lucide-react'
 
 export default function Home() {
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [currentStat, setCurrentStat] = useState(0)
   const [isVisible, setIsVisible] = useState(false)
 
   const stats = [
-    { number: '10,000+', label: 'Active Students', icon: Users },
-    { number: '500+', label: 'Expert Tutors', icon: GraduationCap },
-    { number: '50,000+', label: 'Lessons Completed', icon: BookOpen },
-    { number: '98%', label: 'Satisfaction Rate', icon: Star },
+    { number: language === 'en' ? '10,000+' : '10,000+', label: language === 'en' ? 'Active Students' : 'Pelajar Aktif', icon: Users },
+    { number: language === 'en' ? '500+' : '500+', label: language === 'en' ? 'Expert Tutors' : 'Guru Tuisyen Pakar', icon: GraduationCap },
+    { number: language === 'en' ? '50,000+' : '50,000+', label: language === 'en' ? 'Lessons Completed' : 'Kelas Selesai', icon: BookOpen },
+    { number: language === 'en' ? '98%' : '98%', label: language === 'en' ? 'Satisfaction Rate' : 'Kadar Kepuasan', icon: Star },
   ]
 
   const features = [
     {
       icon: Target,
-      title: 'Personalized Learning',
-      description: 'Customized lesson plans tailored to each student\'s learning style and pace',
+      titleKey: 'landing.personalizedLearning',
+      descKey: 'landing.personalizedLearningDesc',
       color: 'from-blue-500 to-purple-600'
     },
     {
       icon: Shield,
-      title: 'Verified Tutors',
-      description: 'All tutors undergo rigorous background checks and qualification verification',
+      titleKey: 'landing.verifiedTutors2',
+      descKey: 'landing.verifiedTutorsDesc',
       color: 'from-green-500 to-teal-600'
     },
     {
       icon: Zap,
-      title: 'Interactive Sessions',
-      description: 'Engaging online lessons with digital whiteboards and real-time collaboration',
+      titleKey: 'landing.interactiveSessions',
+      descKey: 'landing.interactiveSessionsDesc',
       color: 'from-orange-500 to-red-600'
     },
     {
       icon: Clock,
-      title: 'Flexible Scheduling',
-      description: 'Book sessions at times that work for you with our easy-to-use scheduling system',
+      titleKey: 'landing.flexibleScheduling',
+      descKey: 'landing.flexibleSchedulingDesc',
       color: 'from-purple-500 to-pink-600'
     },
     {
       icon: TrendingUp,
-      title: 'Progress Tracking',
-      description: 'Monitor improvement with detailed progress reports and performance analytics',
+      titleKey: 'landing.progressTracking',
+      descKey: 'landing.progressTrackingDesc',
       color: 'from-cyan-500 to-blue-600'
     },
     {
       icon: Heart,
-      title: 'Dedicated Support',
-      description: '24/7 customer support to help you with any questions or issues',
+      titleKey: 'landing.dedicatedSupport',
+      descKey: 'landing.dedicatedSupportDesc',
       color: 'from-pink-500 to-rose-600'
     }
   ]
@@ -80,31 +80,47 @@ export default function Home() {
   const testimonials = [
     {
       name: 'Sarah Chen',
-      role: 'Parent of Form 3 Student',
-      content: 'EduHome.my has been a game-changer for my daughter\'s Mathematics. The tutor is patient and the progress tracking helps me see real improvement.',
+      role: language === 'en' ? 'Parent of Form 3 Student' : 'Ibu Bapa Pelajar Tingkatan 3',
+      content: language === 'en'
+        ? 'EduHome.my has been a game-changer for my daughter\'s Mathematics. The tutor is patient and the progress tracking helps me see real improvement.'
+        : 'EduHome.my telah mengubah permainan untuk Matematik anak perempuan saya. Guru tuisyen bersabar dan penjejakan kemajuan membantu saya melihat peningkatan yang sebenar.',
       rating: 5,
       avatar: 'SC'
     },
     {
       name: 'Ahmad Rahman',
-      role: 'A-Level Physics Tutor',
-      content: 'The platform makes it easy to manage my students and schedule sessions. I\'ve reached more students than ever before!',
+      role: language === 'en' ? 'A-Level Physics Tutor' : 'Guru Tuisyen Fizik A-Level',
+      content: language === 'en'
+        ? 'The platform makes it easy to manage my students and schedule sessions. I\'ve reached more students than ever before!'
+        : 'Platform ini memudahkan pengurusan pelajar dan penjadualan sesi. Saya telah mencapai lebih ramai pelajar than sebelum ini!',
       rating: 5,
       avatar: 'AR'
     },
     {
       name: 'Mei Ling',
-      role: 'Form 5 Student',
-      content: 'I love how I can learn from home! My tutor explains everything clearly and I\'m much more confident for my SPM exams now.',
+      role: language === 'en' ? 'Form 5 Student' : 'Pelajar Tingkatan 5',
+      content: language === 'en'
+        ? 'I love how I can learn from home! My tutor explains everything clearly and I\'m much more confident for my SPM exams now.'
+        : 'Saya suka bagaimana saya boleh belajar dari rumah! Guru tuisyen saya menerangkan semua dengan jelas dan saya lebih yakin untuk peperiksaan SPM sekarang.',
       rating: 5,
       avatar: 'ML'
     }
   ]
 
   const subjects = [
-    'Mathematics', 'Science', 'Physics', 'Chemistry', 'Biology',
-    'English', 'Bahasa Melayu', 'History', 'Geography', 'Add Math',
-    'Economics', 'Accounting', 'Business Studies'
+    { en: 'Mathematics', ms: 'Matematik' },
+    { en: 'Science', ms: 'Sains' },
+    { en: 'Physics', ms: 'Fizik' },
+    { en: 'Chemistry', ms: 'Kimia' },
+    { en: 'Biology', ms: 'Biologi' },
+    { en: 'English', ms: 'Bahasa Inggeris' },
+    { en: 'Bahasa Melayu', ms: 'Bahasa Melayu' },
+    { en: 'History', ms: 'Sejarah' },
+    { en: 'Geography', ms: 'Geografi' },
+    { en: 'Add Math', ms: 'Matematik Tambahan' },
+    { en: 'Economics', ms: 'Ekonomi' },
+    { en: 'Accounting', ms: 'Perakaunan' },
+    { en: 'Business Studies', ms: 'Pengajian Perniagaan' }
   ]
 
   useEffect(() => {
@@ -112,11 +128,10 @@ export default function Home() {
       setCurrentStat((prev) => (prev + 1) % stats.length)
     }, 3000)
 
-    // Trigger animations when component mounts
     setTimeout(() => setIsVisible(true), 100)
 
     return () => clearInterval(timer)
-  }, [])
+  }, [stats.length])
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 overflow-x-hidden">
@@ -147,19 +162,19 @@ export default function Home() {
                 href="/tutors"
                 className="text-slate-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-blue-50"
               >
-                Find Tutors
+                {t('landing.browseTutors')}
               </Link>
               <Link
                 href="/auth/login"
                 className="text-slate-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-blue-50"
               >
-                Log In
+                {t('auth.login')}
               </Link>
               <Link
                 href="/auth/signup"
                 className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 px-4 py-2 rounded-lg text-sm font-medium shadow-lg hover:shadow-xl transition-all hover:scale-105"
               >
-                Sign Up Free
+                {t('auth.signup')}
               </Link>
             </div>
 
@@ -192,21 +207,21 @@ export default function Home() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
                 >
-                  Find Tutors
+                  {t('landing.browseTutors')}
                 </Link>
                 <Link
                   href="/auth/login"
                   onClick={() => setMobileMenuOpen(false)}
                   className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
                 >
-                  Log In
+                  {t('auth.login')}
                 </Link>
                 <Link
                   href="/auth/signup"
                   onClick={() => setMobileMenuOpen(false)}
                   className="block px-3 py-2 rounded-md text-base font-medium bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 transition-all"
                 >
-                  Sign Up Free
+                  {t('auth.signup')}
                 </Link>
               </div>
             </div>
@@ -221,11 +236,11 @@ export default function Home() {
           <div className="flex flex-wrap justify-center gap-2 mb-6 animate-fade-in-up">
             <span className="px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full flex items-center">
               <CheckCircle className="w-3 h-3 mr-1" />
-              Platform Ready
+              {language === 'en' ? 'Platform Ready' : 'Platform Sedia'}
             </span>
             <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full flex items-center">
               <Users className="w-3 h-3 mr-1" />
-              10,000+ Students
+              {language === 'en' ? '10,000+ Students' : '10,000+ Pelajar'}
             </span>
             <span className="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-semibold rounded-full flex items-center">
               <Star className="w-3 h-3 mr-1" />
@@ -235,16 +250,16 @@ export default function Home() {
 
           <h1 className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-              Transform Your
+              {language === 'en' ? 'Transform Your' : 'Transformasikan'}
             </span>
             <br />
             <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent">
-              Learning Journey
+              {language === 'en' ? 'Learning Journey' : 'Perjalanan Pembelajaran'}
             </span>
           </h1>
 
           <p className={`text-lg sm:text-xl text-gray-600 mb-8 max-w-3xl mx-auto transition-all duration-1000 delay-200 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            Connect with expert tutors, track progress in real-time, and achieve your academic goals with Malaysia's premier online tutoring platform.
+            {t('landing.new.subtitle')}
           </p>
 
           <div className={`flex flex-col sm:flex-row gap-4 justify-center mb-8 transition-all duration-1000 delay-300 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
@@ -252,14 +267,14 @@ export default function Home() {
               href="/auth/signup"
               className="group relative bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 px-8 py-4 rounded-xl text-lg font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all flex items-center justify-center"
             >
-              Get Started Free
+              {t('landing.getStartedFree')}
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
               href="/tutors"
               className="group border-2 border-gray-300 hover:border-blue-500 text-gray-700 hover:text-blue-600 px-8 py-4 rounded-xl text-lg font-semibold transition-all flex items-center justify-center bg-white/80 backdrop-blur-sm hover:bg-white"
             >
-              Browse Tutors
+              {t('landing.browseTutors')}
               <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
@@ -268,15 +283,15 @@ export default function Home() {
           <div className={`flex flex-wrap justify-center items-center gap-6 text-sm text-gray-600 transition-all duration-1000 delay-400 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <div className="flex items-center">
               <Shield className="w-4 h-4 text-green-500 mr-1" />
-              Verified Tutors
+              {t('landing.verifiedTutors')}
             </div>
             <div className="flex items-center">
               <Clock className="w-4 h-4 text-blue-500 mr-1" />
-              24/7 Support
+              {t('landing.support24_7')}
             </div>
             <div className="flex items-center">
               <Award className="w-4 h-4 text-purple-500 mr-1" />
-              Satisfaction Guaranteed
+              {t('landing.satisfactionGuaranteed')}
             </div>
           </div>
         </div>
@@ -310,10 +325,12 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-              Everything You Need to Succeed
+              {language === 'en' ? 'Everything You Need to Succeed' : 'Segala-galanya yang Anda Perlukan untuk Berjaya'}
             </h2>
             <p className={`text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto transition-all duration-1000 delay-200 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-              Powerful features designed to make online tutoring effective, engaging, and convenient for everyone.
+              {language === 'en'
+                ? 'Powerful features designed to make online tutoring effective, engaging, and convenient for everyone.'
+                : 'Ciri-ciri hebat yang direka untuk menjadikan tuisyen dalam talian berkesan, menarik, dan mudah untuk semua orang.'}
             </p>
           </div>
 
@@ -327,10 +344,10 @@ export default function Home() {
                 <div className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                   <feature.icon className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">{t(feature.titleKey)}</h3>
+                <p className="text-gray-600 leading-relaxed">{t(feature.descKey)}</p>
                 <div className="mt-4 flex items-center text-blue-600 font-medium group-hover:text-blue-700 transition-colors">
-                  Learn more <ChevronRight className="ml-1 w-4 h-4" />
+                  {language === 'en' ? 'Learn more' : 'Ketahui lebih lanjut'} <ChevronRight className="ml-1 w-4 h-4" />
                 </div>
               </div>
             ))}
@@ -343,10 +360,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-gray-900">
-              Learn Any Subject
+              {t('landing.learnAnySubject')}
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
-              From primary school to pre-university, we have expert tutors for every subject you need.
+              {t('landing.learnAnySubjectDesc')}
             </p>
           </div>
 
@@ -356,7 +373,7 @@ export default function Home() {
                 key={index}
                 className="px-4 py-2 bg-white border border-gray-200 rounded-full text-gray-700 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all cursor-pointer hover:scale-105"
               >
-                {subject}
+                {subject[language]}
               </span>
             ))}
           </div>
@@ -368,10 +385,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-gray-900">
-              What Our Users Say
+              {t('landing.whatUsersSay')}
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
-              Real experiences from students, parents, and tutors who use EduHome.my
+              {t('landing.whatUsersSayDesc')}
             </p>
           </div>
 
@@ -409,26 +426,26 @@ export default function Home() {
           <div className="mb-8">
             <div className="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-medium mb-6">
               <Sparkles className="w-4 h-4 mr-2" />
-              Limited Time: Get Your First Session Free
+              {t('landing.limitedTimeOffer')}
             </div>
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6">
-            Start Your Learning Journey Today
+            {t('landing.startLearningJourney')}
           </h2>
           <p className="text-lg sm:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-            Join thousands of Malaysian students and parents who trust EduHome.my for quality online tutoring.
+            {t('landing.startLearningJourneyDesc')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/auth/signup"
               className="group bg-white text-blue-600 hover:bg-gray-50 px-8 py-4 rounded-xl text-lg font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all flex items-center justify-center"
             >
-              Get Started Free
+              {t('landing.getStartedFree')}
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <button className="group border-2 border-white/50 text-white hover:border-white hover:bg-white/10 px-8 py-4 rounded-xl text-lg font-semibold transition-all flex items-center justify-center">
               <Play className="w-5 h-5 mr-2" />
-              Watch Demo
+              {t('landing.watchDemo')}
             </button>
           </div>
         </div>
@@ -444,7 +461,9 @@ export default function Home() {
           </div>
           <div className="ml-0 sm:ml-3 text-center sm:text-left">
             <p className="text-sm text-green-700">
-              <strong>🎉 Platform Live!</strong> Google OAuth sign-in now available! <Link href="/test-oauth" className="underline font-medium">Test it here</Link> or <Link href="/auth/signup" className="underline font-medium">create your free account</Link> to get started.
+              <strong>{language === 'en' ? '🎉 Platform Live!' : '🎉 Platform Hidup!'}</strong> {language === 'en'
+                ? 'Google OAuth sign-in now available! Test it here or create your free account to get started.'
+                : 'Log masuk Google OAuth kini tersedia! Uji di sini atau cipta akaun percuma anda untuk bermula.'} <Link href="/test-oauth" className="underline font-medium">{language === 'en' ? 'Test it here' : 'Uji di sini'}</Link> {language === 'en' ? 'or' : 'atau'} <Link href="/auth/signup" className="underline font-medium">{language === 'en' ? 'create your free account' : 'cipta akaun percuma anda'}</Link> {language === 'en' ? 'to get started.' : 'untuk bermula.'}
             </p>
           </div>
         </div>
