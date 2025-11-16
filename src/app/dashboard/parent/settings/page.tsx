@@ -925,10 +925,10 @@ export default function ParentSettingsPage() {
         <div className="border-t pt-6">
           <h4 className="font-medium text-gray-900 mb-3">Quick Links</h4>
           <div className="space-y-2">
-            <a href="#" className="block text-sm text-blue-600 hover:text-blue-800">Terms of Service</a>
-            <a href="#" className="block text-sm text-blue-600 hover:text-blue-800">Privacy Policy</a>
-            <a href="#" className="block text-sm text-blue-600 hover:text-blue-800">Cookie Policy</a>
-            <a href="#" className="block text-sm text-blue-600 hover:text-blue-800">GDPR Compliance</a>
+            <a href="/terms" className="block text-sm text-blue-600 hover:text-blue-800">Terms of Service</a>
+            <a href="/privacy" className="block text-sm text-blue-600 hover:text-blue-800">Privacy Policy</a>
+            <a href="/cookie-policy" className="block text-sm text-blue-600 hover:text-blue-800">Cookie Policy</a>
+            <a href="/cookie-policy" className="block text-sm text-blue-600 hover:text-blue-800">GDPR Compliance</a>
           </div>
         </div>
 
