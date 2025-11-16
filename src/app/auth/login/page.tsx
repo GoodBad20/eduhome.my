@@ -49,6 +49,34 @@ export default function LoginPage() {
     }
   }
 
+  const handleGoogleSignIn = async () => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`
+        }
+      })
+
+      if (error) {
+        setError(error.message)
+        trackAnalyticsError(error, 'Google OAuth')
+      } else {
+        // Track successful OAuth initiation
+        trackFormStart('Google OAuth')
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      setError('An unexpected error occurred with Google sign-in')
+      trackAnalyticsError(error, 'Google OAuth')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center clean-bg py-8 px-4 sm:py-12 sm:px-6 overflow-x-hidden">
       <div className="max-w-md w-full space-y-6 sm:space-y-8">
@@ -158,10 +186,7 @@ export default function LoginPage() {
             <button
               type="button"
               className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-              onClick={() => {
-                // TODO: Implement Google OAuth
-                console.log('Google OAuth not implemented yet')
-              }}
+              onClick={handleGoogleSignIn}
             >
               <span className="sr-only">Sign in with Google</span>
               <svg className="w-5 h-5" viewBox="0 0 24 24">
