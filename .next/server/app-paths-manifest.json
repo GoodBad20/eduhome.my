@@ -1,7 +1,5 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
   "/dashboard/parent/page": "app/dashboard/parent/page.js",
   "/auth/login/page": "app/auth/login/page.js",
-  "/dashboard/parent/schedule/page": "app/dashboard/parent/schedule/page.js",
   "/page": "app/page.js"
 }

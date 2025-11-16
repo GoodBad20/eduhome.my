@@ -178,7 +178,7 @@ export default function LoginPage() {
             <form onSubmit={handleEmailLogin} className="space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  <Mail className="inline w-4 h-4 mr-2" />
+                  <Mail className="inline w-4 h-4 mr-2"/>
                   {t('auth.email') || 'Email Address'}
                 </label>
                 <input
@@ -187,7 +187,7 @@ export default function LoginPage() {
                   type="email"
                   autoComplete="email"
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-colors text-gray-700"
                   placeholder={t('auth.email') || 'Enter your email'}
                   value={formData.email}
                   onChange={handleInputChange}
@@ -206,7 +206,7 @@ export default function LoginPage() {
                     type={showPassword ? 'text' : 'password'}
                     autoComplete="current-password"
                     required
-                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-colors"
+                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-colors text-gray-700"
                     placeholder={t('auth.password') || 'Enter your password'}
                     value={formData.password}
                     onChange={handleInputChange}

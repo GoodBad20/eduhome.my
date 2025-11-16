@@ -291,7 +291,7 @@ export default function SignupPage() {
 
               <div className="space-y-4">
                 {/* Profile Picture Upload */}
-                <div className="flex justify-center mb-6">
+                <div className="flex justify-center mb-6 text-gray-700">
                   <ProfilePictureUpload
                     currentAvatar={profilePicture || undefined}
                     userId={tempUserId || 'temp'}
@@ -346,7 +346,7 @@ export default function SignupPage() {
                     id="role"
                     name="role"
                     required
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-700"
                     value={formData.role}
                     onChange={(e) => {
                       handleChange(e)
@@ -368,7 +368,7 @@ export default function SignupPage() {
                         id="qualification"
                         name="qualification"
                         type="text"
-                        className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-700"
                         placeholder="Bachelor's Degree in Education"
                         value={formData.qualification}
                         onChange={handleChange}
@@ -418,7 +418,7 @@ export default function SignupPage() {
                     <select
                       id="relationship"
                       name="relationship"
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-700"
                       value={formData.relationship}
                       onChange={handleChange}
                     >
